@@ -22,13 +22,13 @@
 
 <header class="topbar">
   <div class="topbar__in">
-    <div class="topbar__brand">BEM FTUI <span>2026</span></div>
+    <div class="topbar__brand"><span data-text="brand">BEM FTUI</span> <span data-text="brandYear">2026</span></div>
     <nav class="topbar__nav" aria-label="Navigasi">
-      <a href="#undanganku">undangan</a>
-      <a href="#agenda">agenda</a>
-      <a href="#persiapan">persiapan</a>
-      <a href="#undangan">variant</a>
-      <a href="#voting">voting</a>
+      <a href="#undanganku" data-text="nav.undangan">undangan</a>
+      <a href="#agenda" data-text="nav.agenda">agenda</a>
+      <a href="#persiapan" data-text="nav.persiapan">persiapan</a>
+      <a href="#undangan" data-text="nav.variant">variant</a>
+      <a href="#voting" data-text="nav.voting">voting</a>
     </nav>
     <button type="button" class="themebtn" id="theme">dark</button>
   </div>
@@ -39,8 +39,8 @@
   <section class="section hero" id="undanganku">
     <div class="wrap">
       <div class="section__head">
-        <div class="section__no">01</div>
-        <h1 class="section__title">undangan</h1>
+        <div class="section__no" data-text="section.undanganNo">01</div>
+        <h1 class="section__title" data-text="section.undangan">undangan</h1>
       </div>
       <article class="card" id="hero-card"></article>
     </div>
@@ -49,8 +49,8 @@
   <section class="section section--alt" id="agenda">
     <div class="wrap">
       <div class="section__head">
-        <div class="section__no">02</div>
-        <h2 class="section__title">agenda</h2>
+        <div class="section__no" data-text="section.agendaNo">02</div>
+        <h2 class="section__title" data-text="section.agenda">agenda</h2>
       </div>
       <div class="agenda" id="agenda-list"></div>
     </div>
@@ -59,23 +59,23 @@
   <section class="section" id="persiapan">
     <div class="wrap">
       <div class="section__head">
-        <div class="section__no">03</div>
-        <h2 class="section__title">persiapan</h2>
+        <div class="section__no" data-text="section.persiapanNo">03</div>
+        <h2 class="section__title" data-text="section.persiapan">persiapan</h2>
       </div>
 
       <div class="cols">
         <section class="panel">
-          <h3 class="panel__title">// to do</h3>
+          <h3 class="panel__title" data-text="panel.todo">// to do</h3>
           <ul class="check" id="prep-todo"></ul>
         </section>
 
         <section class="panel">
-          <h3 class="panel__title">// download</h3>
+          <h3 class="panel__title" data-text="panel.download">// download</h3>
           <ul class="check" id="prep-download"></ul>
         </section>
 
         <section class="panel">
-          <h3 class="panel__title">// bawa</h3>
+          <h3 class="panel__title" data-text="panel.bawa">// bawa</h3>
           <ul class="check" id="prep-bring"></ul>
         </section>
       </div>
@@ -87,8 +87,8 @@
   <section class="section section--alt" id="undangan">
     <div class="wrap">
       <div class="section__head">
-        <div class="section__no">04</div>
-        <h2 class="section__title">12 variant</h2>
+        <div class="section__no" data-text="section.variantNo">04</div>
+        <h2 class="section__title" data-text="section.variant">12 variant</h2>
       </div>
       <div class="gal" id="gallery"></div>
     </div>
@@ -97,8 +97,8 @@
   <section class="section" id="voting">
     <div class="wrap">
       <div class="section__head">
-        <div class="section__no">05</div>
-        <h2 class="section__title">voting tanggal</h2>
+        <div class="section__no" data-text="section.votingNo">05</div>
+        <h2 class="section__title" data-text="section.voting">voting tanggal</h2>
       </div>
 
       <div class="vote">
@@ -106,41 +106,41 @@
         <div class="panel">
           <form id="vote-form">
             <label class="field">
-              <span class="field__label">USERNAME</span>
+              <span class="field__label" data-text="vote.username">USERNAME</span>
               <input class="input" id="vote-input" type="text" autocomplete="off"
-                     placeholder="kean" maxlength="20" spellcheck="false">
+                     placeholder="kean" data-placeholder="vote.placeholder" maxlength="20" spellcheck="false">
             </label>
-            <button class="btn" type="submit">masuk</button>
+            <button class="btn" type="submit" data-text="btn.masuk">masuk</button>
             <div class="chips" id="vote-chips"></div>
           </form>
 
           <div class="who" id="vote-who" hidden>
             <span>&gt; <strong id="vote-name"></strong></span>
             <span class="comment" id="vote-mine"></span>
-            <button type="button" id="vote-swap">ganti</button>
+            <button type="button" id="vote-swap" data-text="btn.ganti">ganti</button>
           </div>
 
           <ul class="rank" id="rank"></ul>
 
           <div class="stats">
             <div class="stat">
-              <div class="stat__k">ORANG</div>
+              <div class="stat__k" data-text="vote.orang">ORANG</div>
               <div class="stat__v" id="stat-people">0/20</div>
             </div>
             <div class="stat">
-              <div class="stat__k">TAG</div>
+              <div class="stat__k" data-text="vote.tag">TAG</div>
               <div class="stat__v" id="stat-tags">0</div>
             </div>
             <div class="stat">
-              <div class="stat__k">TOP</div>
+              <div class="stat__k" data-text="vote.top">TOP</div>
               <div class="stat__v" id="stat-top">&mdash;</div>
             </div>
           </div>
 
           <div class="tools">
-            <button class="btn btn--ghost" type="button" id="tool-refresh">refresh</button>
-            <button class="btn btn--ghost" type="button" id="tool-copy">salin</button>
-            <button class="btn btn--ghost" type="button" id="tool-reset">hapus</button>
+            <button class="btn btn--ghost" type="button" id="tool-refresh" data-text="btn.refresh">refresh</button>
+            <button class="btn btn--ghost" type="button" id="tool-copy" data-text="btn.salin">salin</button>
+            <button class="btn btn--ghost" type="button" id="tool-reset" data-text="btn.hapus">hapus</button>
           </div>
 
           <p class="panel__foot" id="vote-msg" role="status" aria-live="polite"></p>

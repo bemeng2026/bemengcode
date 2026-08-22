@@ -14,6 +14,24 @@ function esc(str) {
   })[c]);
 }
 
+/* ---------- ambil teks dari TEXT ---------- */
+
+function t(path, fallback = "") {
+  const value = String(path)
+    .split(".")
+    .reduce((node, key) => (node == null ? undefined : node[key]), TEXT);
+  return value == null ? fallback : String(value);
+}
+
+function applyText() {
+  document.querySelectorAll("[data-text]").forEach((el) => {
+    el.textContent = t(el.dataset.text, el.textContent);
+  });
+  document.querySelectorAll("[data-placeholder]").forEach((el) => {
+    el.placeholder = t(el.dataset.placeholder, el.placeholder);
+  });
+}
+
 /* ---------- baris kode undangan ---------- */
 
 function codeLines(guest, { big }) {
@@ -61,15 +79,15 @@ function renderHero(guest) {
     <div class="hero__body">
       ${codeLines(guest, { big: true })}
       <dl class="hero__meta">
-        <div><dt>ACARA</dt><dd>${esc(EVENT.title)}</dd></div>
-        <div><dt>TANGGAL</dt><dd>// ${esc(EVENT.dateLabel)}</dd></div>
-        <div><dt>TEMPAT</dt><dd>${esc(EVENT.place)}</dd></div>
-        <div><dt>DRESS CODE</dt><dd>${esc(EVENT.dressCode)}</dd></div>
+        <div><dt>${esc(t("meta.acara"))}</dt><dd>${esc(EVENT.title)}</dd></div>
+        <div><dt>${esc(t("meta.tanggal"))}</dt><dd>// ${esc(EVENT.dateLabel)}</dd></div>
+        <div><dt>${esc(t("meta.tempat"))}</dt><dd>${esc(EVENT.place)}</dd></div>
+        <div><dt>${esc(t("meta.dress"))}</dt><dd>${esc(EVENT.dressCode)}</dd></div>
       </dl>
       <div class="hero__actions">
-        <a class="btn" href="#voting">voting</a>
-        <a class="btn btn--ghost" href="#agenda">agenda</a>
-        <a class="btn btn--ghost" href="#undangan">12 variant</a>
+        <a class="btn" href="#voting">${esc(t("btn.voting"))}</a>
+        <a class="btn btn--ghost" href="#agenda">${esc(t("btn.agenda"))}</a>
+        <a class="btn btn--ghost" href="#undangan">${esc(t("btn.variant"))}</a>
       </div>
     </div>`;
 
@@ -181,7 +199,7 @@ function initTheme() {
       document.documentElement.dataset.theme === "dark" ||
       (!document.documentElement.dataset.theme &&
         matchMedia("(prefers-color-scheme: dark)").matches);
-    btn.textContent = dark ? "light" : "dark";
+    btn.textContent = dark ? t("theme.light") : t("theme.dark");
     btn.setAttribute("aria-label", dark ? "Ganti ke tema terang" : "Ganti ke tema gelap");
   };
 
@@ -205,6 +223,7 @@ function initTheme() {
 /* ---------- start ---------- */
 
 function boot() {
+  applyText();
   const guest = currentGuest();
   renderHero(guest);
   renderAgenda();

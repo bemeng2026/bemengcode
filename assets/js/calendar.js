@@ -343,7 +343,7 @@ function initVoting() {
 
   const mode = document.querySelector("#vote-mode");
   if (mode) {
-    mode.textContent = store.mode === "remote" ? "sync" : "lokal";
+    mode.textContent = store.mode === "remote" ? t("vote.sync") : t("vote.lokal");
   }
 
   me = normalizeUser(Prefs.getUser());

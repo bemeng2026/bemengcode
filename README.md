@@ -18,6 +18,15 @@ assets/js/calendar.js   # kalender + heatmap
 assets/js/main.js       # render
 ```
 
+## Ngedit teks
+
+Semua tulisan yang tampil di halaman ada di `assets/js/data.js`:
+`TEXT` (label & judul), `EVENT` (detail acara), `GUESTS` (12 undangan),
+`AGENDA`, `PREP`.
+
+Ganti isi di dalam tanda kutip `"..."` saja. Jangan hapus tanda kutip,
+koma, atau kurung.
+
 ## Undangan
 
 `index.html?u=<slug>` — kean, jason, barez, udin, razel, muti, muna, jpg,

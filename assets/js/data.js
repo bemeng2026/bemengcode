@@ -3,6 +3,77 @@
    Data undangan, agenda, dan checklist persiapan.
    ========================================================= */
 
+/* =========================================================
+   SEMUA TEKS WEBSITE ADA DI FILE INI.
+   Ganti tulisan di dalam tanda kutip "..." saja.
+   Jangan hapus tanda kutip, koma, atau kurung.
+   ========================================================= */
+
+const TEXT = {
+  brand: "BEM FTUI",
+  brandYear: "2026",
+
+  nav: {
+    undangan: "undangan",
+    agenda: "agenda",
+    persiapan: "persiapan",
+    variant: "variant",
+    voting: "voting",
+  },
+
+  section: {
+    undanganNo: "01",
+    undangan: "undangan",
+    agendaNo: "02",
+    agenda: "agenda",
+    persiapanNo: "03",
+    persiapan: "persiapan",
+    variantNo: "04",
+    variant: "12 variant",
+    votingNo: "05",
+    voting: "voting tanggal",
+  },
+
+  meta: {
+    acara: "ACARA",
+    tanggal: "TANGGAL",
+    tempat: "TEMPAT",
+    dress: "DRESS CODE",
+  },
+
+  btn: {
+    voting: "voting",
+    agenda: "agenda",
+    variant: "12 variant",
+    masuk: "masuk",
+    ganti: "ganti",
+    refresh: "refresh",
+    salin: "salin",
+    hapus: "hapus",
+  },
+
+  panel: {
+    todo: "// to do",
+    download: "// download",
+    bawa: "// bawa",
+  },
+
+  vote: {
+    username: "USERNAME",
+    placeholder: "kean",
+    orang: "ORANG",
+    tag: "TAG",
+    top: "TOP",
+    lokal: "lokal",
+    sync: "sync",
+  },
+
+  theme: {
+    dark: "dark",
+    light: "light",
+  },
+};
+
 const EVENT = {
   title: "Malam Sekolah Media",
   org: "BEM FTUI 2026",
