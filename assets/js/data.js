@@ -6,12 +6,10 @@
 const EVENT = {
   title: "Malam Sekolah Media",
   org: "BEM FTUI 2026",
-  division: "Media & Kreatif",
   dateLabel: "__.09.2026",
-  dateNote: "tanggal final ditentukan lewat voting kalender di bawah",
   site: "www.bemftui2026.com",
-  place: "Sekretariat BEM FTUI — Gedung Engineering Center",
-  dressCode: "Serba item, bawa laptop + charger",
+  place: "Sekre BEM FTUI",
+  dressCode: "Serba item",
 };
 
 /* Roster: 12 undangan personal.
@@ -164,75 +162,43 @@ const GUESTS = [
   },
 ];
 
-/* 5 daftar isi acara */
 const AGENDA = [
-  {
-    no: "01",
-    tag: "</html>",
-    title: "code </html>",
-    desc:
-      "Bedah struktur halaman dari nol. Semantic HTML, layout, sampai halaman ini sendiri kita bongkar bareng-bareng.",
-    items: ["Struktur & semantic tag", "Layout dasar CSS", "Deploy pertama ke GitHub Pages"],
-  },
-  {
-    no: "02",
-    tag: "<Framer />",
-    title: "framer integration",
-    desc:
-      "Dari Figma ke Framer ke web beneran. Handoff desain tanpa drama, plus komponen yang bisa dipakai ulang.",
-    items: ["Figma → Framer handoff", "Komponen & variant", "Publish + custom domain"],
-  },
-  {
-    no: "03",
-    tag: "git push",
-    title: "github repository",
-    desc:
-      "Satu repo untuk satu divisi. Branch, commit, pull request — biar kerja bareng nggak saling nimpa.",
-    items: ["Branch & commit yang rapi", "Pull request + review", "Kolaborasi 20 orang di satu repo"],
-  },
-  {
-    no: "04",
-    tag: "claude()",
-    title: "claude for code",
-    desc:
-      "Ngoding bareng AI tanpa jadi malas mikir. Prompt yang bener, review hasilnya, tahu kapan harus nolak sarannya.",
-    items: ["Setup Claude Code", "Prompt untuk kerjaan nyata", "Review & verifikasi output"],
-  },
-  {
-    no: "05",
-    tag: "24h",
-    title: "a whole day and night medz",
-    desc:
-      "Sehari semalam penuh bareng anak media. Ngoding, ngedesain, makan, tidur sebentar, lanjut lagi.",
-    items: ["Sesi siang: materi", "Sesi malam: build bareng", "Demo hasil sebelum pulang"],
-  },
+  { no: "01", tag: "</html>", title: "code </html>",
+    items: ["semantic tag", "layout css", "deploy"] },
+  { no: "02", tag: "<Framer />", title: "framer integration",
+    items: ["figma handoff", "komponen", "publish"] },
+  { no: "03", tag: "git push", title: "github repository",
+    items: ["branch", "pull request", "kolaborasi"] },
+  { no: "04", tag: "claude()", title: "claude for code",
+    items: ["setup", "prompt", "review"] },
+  { no: "05", tag: "24h", title: "a whole day and night medz",
+    items: ["siang: materi", "malam: build", "demo"] },
 ];
 
-/* Slide 3 — to do list & persiapan */
 const PREP = {
   todo: [
-    { label: "Isi voting tanggal di kalender bawah", note: "wajib, sebelum H-14" },
-    { label: "Konfirmasi kehadiran ke PJ divisi", note: "via grup WhatsApp" },
-    { label: "Bikin akun GitHub", note: "pakai email yang aktif" },
-    { label: "Bikin akun Framer", note: "free plan cukup" },
-    { label: "Join repo bemftui2026", note: "minta invite ke PJ" },
-    { label: "Baca materi pra-acara", note: "dishare H-3" },
+    { label: "voting tanggal" },
+    { label: "konfirmasi ke PJ" },
+    { label: "akun github" },
+    { label: "akun framer" },
+    { label: "join repo" },
+    { label: "baca materi" },
   ],
   download: [
-    { label: "Visual Studio Code", note: "code editor utama", url: "https://code.visualstudio.com" },
-    { label: "Git", note: "version control", url: "https://git-scm.com/downloads" },
-    { label: "Google Chrome", note: "buat DevTools", url: "https://www.google.com/chrome" },
-    { label: "Figma Desktop", note: "file desain acara", url: "https://www.figma.com/downloads" },
-    { label: "Framer", note: "bisa lewat browser", url: "https://www.framer.com" },
-    { label: "Claude Code", note: "CLI, butuh Node.js", url: "https://claude.com/claude-code" },
+    { label: "vs code", url: "https://code.visualstudio.com" },
+    { label: "git", url: "https://git-scm.com/downloads" },
+    { label: "chrome", url: "https://www.google.com/chrome" },
+    { label: "figma", url: "https://www.figma.com/downloads" },
+    { label: "framer", url: "https://www.framer.com" },
+    { label: "claude code", url: "https://claude.com/claude-code" },
   ],
   bring: [
-    { label: "Laptop", note: "min. 8GB RAM, storage sisa 10GB" },
-    { label: "Charger + power bank", note: "colokan terbatas" },
-    { label: "Mouse", note: "opsional tapi ngebantu" },
-    { label: "Headset", note: "buat sesi mandiri" },
-    { label: "Baju ganti + obat pribadi", note: "nginep semalam" },
-    { label: "Botol minum", note: "hemat, no sampah" },
+    { label: "laptop" },
+    { label: "charger" },
+    { label: "mouse" },
+    { label: "headset" },
+    { label: "baju ganti" },
+    { label: "botol minum" },
   ],
 };
 

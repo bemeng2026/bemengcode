@@ -89,8 +89,8 @@ function renderCalendar() {
       .filter(Boolean)
       .join(" ");
 
-    const who = taggers.length ? `Ditag oleh: ${taggers.join(", ")}` : "Belum ada yang nge-tag";
-    const label = `${d} ${MONTHS[month - 1]} ${year} — ${taggers.length} suara. ${who}`;
+    const who = taggers.length ? taggers.join(", ") : "";
+    const label = `${d} ${MONTHS[month - 1]} ${year} — ${taggers.length} suara`;
 
     cells.push(`
       <button type="button" class="${classes}"
@@ -131,7 +131,7 @@ function renderRanking(counts, max) {
 
   if (!rows.length) {
     host.innerHTML =
-      '<li class="empty">Belum ada tanggal yang ditag. Mulai dari kamu duluan.</li>';
+      '<li class="empty">&mdash;</li>';
     return;
   }
 
@@ -185,7 +185,7 @@ async function toggleDate(date) {
   else {
     const cap = VOTE.maxPicksPerUser;
     if (cap > 0 && mine.size >= cap) {
-      say(`Maksimal ${cap} tanggal per orang. Lepas salah satu dulu.`);
+      say(`maks ${cap} tanggal`);
       return;
     }
     mine.add(date);
@@ -200,7 +200,7 @@ async function toggleDate(date) {
     await store.write(votes);
     say("");
   } catch {
-    say("Gagal simpan ke server. Tag kamu belum tersimpan buat orang lain.");
+    say("gagal simpan");
   }
 }
 
@@ -230,8 +230,7 @@ function paintIdentity() {
 
   const countEl = document.querySelector("#vote-mine");
   if (countEl) {
-    const n = (votes[me] || []).length;
-    countEl.textContent = n ? `${n} tanggal ditag` : "belum nge-tag";
+    countEl.textContent = String((votes[me] || []).length);
   }
 }
 
@@ -240,10 +239,10 @@ function paintIdentity() {
 function summaryText() {
   const counts = tally();
   const rows = [...counts.entries()].sort((a, b) => b[1].length - a[1].length);
-  const head = `Voting tanggal ${MONTHS[VOTE.month - 1]} ${VOTE.year} — ${EVENT.title}`;
-  if (!rows.length) return `${head}\nBelum ada suara.`;
+  const head = `${MONTHS[VOTE.month - 1]} ${VOTE.year}`;
+  if (!rows.length) return head;
   const body = rows
-    .map(([date, users]) => `${date} — ${users.length} suara (${users.join(", ")})`)
+    .map(([date, users]) => `${date} ${users.length} ${users.join(",")}`)
     .join("\n");
   return `${head}\n${body}`;
 }
@@ -258,9 +257,9 @@ function initTools() {
       const text = summaryText();
       try {
         await navigator.clipboard.writeText(text);
-        say("Rekap voting tersalin.");
+        say("tersalin");
       } catch {
-        say("Clipboard diblokir browser. Rekap ada di console.");
+        say("clipboard diblokir");
         console.log(text);
       }
     });
@@ -269,7 +268,7 @@ function initTools() {
   if (reset) {
     reset.addEventListener("click", async () => {
       if (!me) return;
-      if (!confirm(`Hapus semua tag punya "${me}"?`)) return;
+      if (!confirm(`hapus tag ${me}?`)) return;
       try {
         votes = await store.read();
       } catch {
@@ -279,9 +278,9 @@ function initTools() {
       renderCalendar();
       try {
         await store.write(votes);
-        say("Tag kamu sudah dihapus.");
+        say("terhapus");
       } catch {
-        say("Gagal simpan ke server.");
+        say("gagal simpan");
       }
     });
   }
@@ -289,7 +288,7 @@ function initTools() {
   if (refresh) {
     refresh.addEventListener("click", async () => {
       await loadVotes();
-      say("Data voting diperbarui.");
+      say("");
     });
   }
 }
@@ -299,7 +298,7 @@ async function loadVotes() {
     votes = await store.read();
   } catch {
     votes = {};
-    say("Gagal ambil data voting dari server.");
+    say("gagal muat");
   }
   renderCalendar();
 }
@@ -344,10 +343,7 @@ function initVoting() {
 
   const mode = document.querySelector("#vote-mode");
   if (mode) {
-    mode.textContent =
-      store.mode === "remote"
-        ? "mode bareng — tag kamu kelihatan semua orang"
-        : "mode lokal — tag masih tersimpan di browser ini saja";
+    mode.textContent = store.mode === "remote" ? "sync" : "lokal";
   }
 
   me = normalizeUser(Prefs.getUser());
@@ -359,14 +355,14 @@ function initVoting() {
 function tryJoin(raw) {
   const name = normalizeUser(raw);
   if (name.length < 2) {
-    say("Username minimal 2 karakter (huruf kecil, angka, . _ -).");
+    say("username min. 2 karakter");
     return;
   }
 
   const isNew = !Object.prototype.hasOwnProperty.call(votes, name);
   const filled = Object.keys(votes).length;
   if (isNew && filled >= VOTE.maxParticipants) {
-    say(`Kuota ${VOTE.maxParticipants} orang sudah penuh.`);
+    say("kuota penuh");
     return;
   }
 

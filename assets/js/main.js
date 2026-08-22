@@ -67,14 +67,12 @@ function renderHero(guest) {
         <div><dt>DRESS CODE</dt><dd>${esc(EVENT.dressCode)}</dd></div>
       </dl>
       <div class="hero__actions">
-        <a class="btn" href="#voting">Isi voting tanggal</a>
-        <a class="btn btn--ghost" href="#agenda">Lihat agenda</a>
-        <a class="btn btn--ghost" href="#undangan">Undangan lainnya</a>
+        <a class="btn" href="#voting">voting</a>
+        <a class="btn btn--ghost" href="#agenda">agenda</a>
+        <a class="btn btn--ghost" href="#undangan">12 variant</a>
       </div>
     </div>`;
 
-  const label = $("#hero-guest");
-  if (label) label.textContent = guest.name;
   document.title = `${guest.name} — ${EVENT.title} · ${EVENT.org}`;
 }
 
@@ -91,7 +89,6 @@ function renderAgenda() {
       <div>
         <span class="ag__tag">${esc(a.tag)}</span>
         <h3 class="ag__title">${esc(a.title)}</h3>
-        <p class="ag__desc">${esc(a.desc)}</p>
         <ul class="ag__items">
           ${a.items.map((i) => `<li>${esc(i)}</li>`).join("")}
         </ul>
@@ -104,17 +101,11 @@ function renderAgenda() {
 
 function checkItem(id, item, index) {
   const key = `${id}-${index}`;
-  const note = item.url
-    ? `<a class="check__note" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">${esc(item.note)} &nearr;</a>`
-    : `<span class="check__note">${esc(item.note)}</span>`;
-  return `
-    <li>
-      <input type="checkbox" id="ck-${esc(key)}" data-prep="${esc(key)}">
-      <label for="ck-${esc(key)}">
-        <span class="check__label">${esc(item.label)}</span>
-        ${note}
-      </label>
-    </li>`;
+  const box = `<input type="checkbox" id="ck-${esc(key)}" data-prep="${esc(key)}">`;
+  const text = item.url
+    ? `<span class="check__label"><a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">${esc(item.label)} &nearr;</a></span>`
+    : `<label for="ck-${esc(key)}"><span class="check__label">${esc(item.label)}</span></label>`;
+  return `<li>${box}${text}</li>`;
 }
 
 function renderPrep() {
@@ -148,7 +139,7 @@ function updatePrepCount() {
   const boxes = document.querySelectorAll("[data-prep]");
   const done = document.querySelectorAll("[data-prep]:checked").length;
   const el = $("#prep-count");
-  if (el) el.textContent = `${done}/${boxes.length} beres`;
+  if (el) el.textContent = `${done}/${boxes.length}`;
 }
 
 /* ---------- galeri 12 undangan ---------- */
@@ -162,7 +153,7 @@ function renderGallery(active) {
     <a class="inv inv--${esc(g.accent)}"
        href="?u=${encodeURIComponent(g.slug)}"
        aria-current="${g.slug === active.slug}">
-      <span class="inv__who">${esc(g.variant)} &middot; ${esc(g.name)}</span>
+      <span class="inv__who">${esc(g.name)}</span>
       ${codeLines(g, { big: false })}
       <span class="inv__mark">&lt;/&gt;</span>
       <span class="inv__site">${esc(EVENT.site)}</span>
@@ -190,7 +181,7 @@ function initTheme() {
       document.documentElement.dataset.theme === "dark" ||
       (!document.documentElement.dataset.theme &&
         matchMedia("(prefers-color-scheme: dark)").matches);
-    btn.textContent = dark ? "// light" : "// dark";
+    btn.textContent = dark ? "light" : "dark";
     btn.setAttribute("aria-label", dark ? "Ganti ke tema terang" : "Ganti ke tema gelap");
   };
 
