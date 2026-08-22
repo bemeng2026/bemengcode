@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Malam Sekolah Media — BEM FTUI 2026</title>
+<meta name="description" content="Undangan Malam Sekolah Media BEM FTUI 2026. Agenda, checklist persiapan, dan voting tanggal bareng anak media.">
+<meta name="color-scheme" content="light dark">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Malam Sekolah Media — BEM FTUI 2026">
+<meta property="og:description" content="You are invited. Sehari semalam ngoding, ngedesain, bareng anak media FTUI.">
+<meta property="og:url" content="https://www.bemftui2026.com">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80' font-family='monospace'>&lt;/&gt;</text></svg>">
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="topbar__in">
+    <div class="topbar__brand">BEM FTUI <span>2026</span></div>
+    <nav class="topbar__nav" aria-label="Navigasi halaman">
+      <a href="#undanganku">Undangan</a>
+      <a href="#agenda">Agenda</a>
+      <a href="#persiapan">Persiapan</a>
+      <a href="#undangan">12 Variant</a>
+      <a href="#voting">Voting Tanggal</a>
+    </nav>
+    <button type="button" class="themebtn" id="theme">// dark</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============ SLIDE 1 — UNDANGAN ============ -->
+  <section class="section hero" id="undanganku">
+    <div class="wrap">
+      <div class="section__head">
+        <div class="section__no">SLIDE 01 &middot; UNDANGAN</div>
+        <h1 class="section__title">
+          Undangan buat <span class="kw" id="hero-guest">kamu</span>
+        </h1>
+        <p class="section__sub">
+          <span class="comment">// Malam Sekolah Media &mdash; Divisi Media &amp; Kreatif BEM FTUI 2026.</span>
+        </p>
+      </div>
+
+      <article class="card" id="hero-card"></article>
+
+      <p class="notice">
+        Undangan ini personal. Ganti nama di URL buat kirim ke orang lain, contoh
+        <code>?u=jason</code> &mdash; atau ambil dari galeri 12 variant di bawah.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 2 — AGENDA ============ -->
+  <section class="section section--alt" id="agenda">
+    <div class="wrap">
+      <div class="section__head">
+        <div class="section__no">SLIDE 02 &middot; AGENDA</div>
+        <h2 class="section__title">5 daftar isi</h2>
+        <p class="section__sub">
+          Lima sesi, satu hari satu malam. Dari nulis tag pertama sampai demo hasil.
+        </p>
+      </div>
+      <div class="agenda" id="agenda-list"></div>
+    </div>
+  </section>
+
+  <!-- ============ SLIDE 3 — PERSIAPAN ============ -->
+  <section class="section" id="persiapan">
+    <div class="wrap">
+      <div class="section__head">
+        <div class="section__no">SLIDE 03 &middot; PERSIAPAN</div>
+        <h2 class="section__title">To do list &amp; bawaan</h2>
+        <p class="section__sub">
+          Beresin ini sebelum hari-H biar nggak ada yang kelabakan pas acara.
+          <span class="comment">// centangnya kesimpen di browser kamu &mdash; <span id="prep-count">0/0 beres</span></span>
+        </p>
+      </div>
+
+      <div class="cols">
+        <section class="panel">
+          <h3 class="panel__title">// to do</h3>
+          <p class="panel__hint">Urusan administratif</p>
+          <ul class="check" id="prep-todo"></ul>
+        </section>
+
+        <section class="panel">
+          <h3 class="panel__title">// download</h3>
+          <p class="panel__hint">Install duluan, jangan pas acara</p>
+          <ul class="check" id="prep-download"></ul>
+          <p class="panel__foot">Wi-Fi sekret nggak kuat buat 20 orang download barengan.</p>
+        </section>
+
+        <section class="panel">
+          <h3 class="panel__title">// bawa</h3>
+          <p class="panel__hint">Barang fisik</p>
+          <ul class="check" id="prep-bring"></ul>
+          <p class="panel__foot">Nginep semalam, jadi bawa yang perlu aja tapi lengkap.</p>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 12 VARIANT UNDANGAN ============ -->
+  <section class="section section--alt" id="undangan">
+    <div class="wrap">
+      <div class="section__head">
+        <div class="section__no">GALERI &middot; 12 VARIANT</div>
+        <h2 class="section__title">Satu orang, satu undangan</h2>
+        <p class="section__sub">
+          Dua belas undangan dengan gimmick koding beda-beda. Klik salah satu buat
+          buka versi besarnya, terus tinggal share link-nya.
+        </p>
+      </div>
+      <div class="gal" id="gallery"></div>
+    </div>
+  </section>
+
+  <!-- ============ VOTING TANGGAL ============ -->
+  <section class="section" id="voting">
+    <div class="wrap">
+      <div class="section__head">
+        <div class="section__no">PROYEKSI TANGGAL &middot; VOTING</div>
+        <h2 class="section__title">Kapan enaknya?</h2>
+        <p class="section__sub">
+          Masukin username kamu, terus tag tanggal yang kamu kosong. Satu tanggal
+          boleh ditag banyak orang &mdash; makin gelap kotaknya, makin banyak yang bisa.
+          <span class="comment">// <span id="vote-mode"></span></span>
+        </p>
+      </div>
+
+      <div class="vote">
+
+        <div class="panel">
+          <form id="vote-form">
+            <label class="field">
+              <span class="field__label">USERNAME KAMU</span>
+              <input class="input" id="vote-input" type="text" autocomplete="off"
+                     placeholder="misal: kean" maxlength="20" spellcheck="false">
+            </label>
+            <button class="btn" type="submit">Masuk &amp; mulai nge-tag</button>
+            <p class="field__label" style="margin-top:16px">ATAU PILIH CEPAT</p>
+            <div class="chips" id="vote-chips"></div>
+          </form>
+
+          <div class="who" id="vote-who" hidden>
+            <span>&gt; <strong id="vote-name"></strong></span>
+            <span class="comment" id="vote-mine"></span>
+            <button type="button" id="vote-swap">ganti</button>
+          </div>
+
+          <ul class="rank" id="rank"></ul>
+
+          <div class="stats">
+            <div class="stat">
+              <div class="stat__k">ORANG</div>
+              <div class="stat__v" id="stat-people">0/20</div>
+            </div>
+            <div class="stat">
+              <div class="stat__k">TOTAL TAG</div>
+              <div class="stat__v" id="stat-tags">0</div>
+            </div>
+            <div class="stat">
+              <div class="stat__k">TERBANYAK</div>
+              <div class="stat__v" id="stat-top">&mdash;</div>
+            </div>
+          </div>
+
+          <div class="tools">
+            <button class="btn btn--ghost" type="button" id="tool-refresh">Refresh</button>
+            <button class="btn btn--ghost" type="button" id="tool-copy">Salin rekap</button>
+            <button class="btn btn--ghost" type="button" id="tool-reset">Hapus tag saya</button>
+          </div>
+
+          <p class="panel__foot" id="vote-msg" role="status" aria-live="polite"></p>
+        </div>
+
+        <div class="panel">
+          <div class="cal__head">
+            <span class="cal__month" id="cal-month">September 2026</span>
+            <span class="cal__hint">klik tanggal buat tag / lepas</span>
+          </div>
+
+          <div class="cal__grid" id="cal-grid"></div>
+
+          <div class="legend">
+            <span>sepi</span>
+            <span class="legend__sw" style="background:var(--heat-0)"></span>
+            <span class="legend__sw" style="background:var(--heat-1)"></span>
+            <span class="legend__sw" style="background:var(--heat-2)"></span>
+            <span class="legend__sw" style="background:var(--heat-3)"></span>
+            <span class="legend__sw" style="background:var(--heat-4)"></span>
+            <span class="legend__sw" style="background:var(--heat-5)"></span>
+            <span>rame</span>
+            <span style="margin-left:auto">kotak bergaris = tag kamu</span>
+          </div>
+
+          <p class="panel__foot">
+            Tag boleh diubah kapan aja sampai tanggal dikunci. Hasil akhirnya
+            dipakai buat nentuin hari konsol.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <a class="foot__site" href="https://www.bemftui2026.com">www.bemftui2026.com</a>
+    <div>Malam Sekolah Media &middot; Divisi Media &amp; Kreatif &middot; BEM FTUI <span id="year">2026</span></div>
+    <div class="comment">// dibangun pakai HTML, CSS, dan sedikit JavaScript. Repo-nya kita bedah bareng pas acara.</div>
+  </div>
+</footer>
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/storage.js"></script>
+<script src="assets/js/calendar.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
