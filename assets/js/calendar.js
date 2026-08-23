@@ -24,6 +24,18 @@ let me = "";
 let poll = null;
 let lastSeen = "";
 
+/* Susunan satu bulan: berapa sel kosong di depan, dan berapa harinya. */
+function monthLayout() {
+  const { year, month } = VOTE;
+  return {
+    year,
+    month,
+    total: new Date(year, month, 0).getDate(),
+    /* getDay(): 0 = Minggu. Digeser supaya minggu mulai Senin. */
+    lead: (new Date(year, month - 1, 1).getDay() + 6) % 7,
+  };
+}
+
 const iso = (y, m, d) =>
   `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 
@@ -61,11 +73,7 @@ function renderCalendar() {
   const max = counts.size ? Math.max(...[...counts.values()].map((u) => u.length)) : 0;
   const mine = new Set(draft);
 
-  const { year, month } = VOTE;
-  const first = new Date(year, month - 1, 1);
-  const total = new Date(year, month, 0).getDate();
-  /* getDay(): 0 = Minggu. Geser supaya minggu mulai Senin. */
-  const lead = (first.getDay() + 6) % 7;
+  const { year, month, total, lead } = monthLayout();
 
   const cells = DOW.map((d) => `<div class="cal__dow">${d}</div>`);
 
@@ -102,7 +110,10 @@ function renderCalendar() {
   host.innerHTML = cells.join("");
 
   host.querySelectorAll("[data-date]").forEach((btn) => {
-    btn.addEventListener("click", () => toggleDate(btn.dataset.date));
+    btn.addEventListener("click", () => {
+      if (dragged) return; /* sudah diurus waktu digeser */
+      toggleDate(btn.dataset.date);
+    });
   });
 
   const label = document.querySelector("#cal-month");
@@ -149,18 +160,49 @@ function renderTop3(counts, max) {
   if (host) host.innerHTML = top3HTML(counts, max);
 }
 
-/* Halaman terakhir: tanggal pilihan orang ini + hasil sementara. */
+/* Halaman terakhir: seluruh bulan sebagai heatmap, lalu tiga tanggal
+   teratas. Sengaja tanpa angka — cukup kelihatan mana yang paling
+   banyak kosongnya. */
 function renderThanks(counts, max) {
-  const mine = document.querySelector("#thanks-mine");
-  if (mine) {
-    const sent = votes[me] ? votes[me].dates : [];
-    mine.innerHTML = sent.length
-      ? sent.map((d) => `<span class="pick">${dayLabel(d)}</span>`).join("")
-      : '<span class="empty">&mdash;</span>';
+  const host = document.querySelector("#thanks-mini");
+  if (host) {
+    const { year, month, total, lead } = monthLayout();
+    const mine = new Set(votes[me] ? votes[me].dates : []);
+    const cells = [];
+
+    for (let i = 0; i < lead; i += 1) {
+      cells.push('<span class="mini__c mini__c--empty"></span>');
+    }
+
+    for (let d = 1; d <= total; d += 1) {
+      const date = iso(year, month, d);
+      const level = heatLevel((counts.get(date) || []).length, max);
+      cells.push(
+        `<span class="mini__c ${level ? `mini__c--h${level}` : ""} ${
+          mine.has(date) ? "mini__c--mine" : ""
+        }">${d}</span>`
+      );
+    }
+
+    host.innerHTML = cells.join("");
   }
 
-  const top = document.querySelector("#thanks-top3");
-  if (top) top.innerHTML = top3HTML(counts, max);
+  const podium = document.querySelector("#thanks-podium");
+  if (!podium) return;
+
+  const rows = rankRows(counts).slice(0, 3);
+  podium.innerHTML = rows.length
+    ? rows
+        .map(([date, users], i) => {
+          const level = heatLevel(users.length, max);
+          return `
+        <span class="pod pod--${i + 1} ${level ? `pod--h${level}` : ""}">
+          <span class="pod__d">${Number(date.slice(8, 10))}</span>
+          <span class="pod__m">${MONTHS[VOTE.month - 1].slice(0, 3)}</span>
+        </span>`;
+        })
+        .join("")
+    : '<span class="empty">&mdash;</span>';
 }
 
 function renderStats(counts) {
@@ -195,14 +237,70 @@ function renderRoster() {
   ).join("");
 }
 
+/* ---------- nandain beberapa hari sekaligus ---------- */
+
+let dragging = false;
+let dragMode = true; /* true = lagi nandain, false = lagi ngelepas */
+let dragged = false;
+
+function dayAt(x, y) {
+  const el = document.elementFromPoint(x, y);
+  return el && el.closest ? el.closest("[data-date]") : null;
+}
+
+/* Nandain seminggu penuh mestinya satu gerakan, bukan tujuh ketukan. */
+function initDrag() {
+  const grid = document.querySelector("#cal-grid");
+  if (!grid) return;
+
+  grid.addEventListener("pointerdown", (e) => {
+    const cell = e.target.closest("[data-date]");
+    if (!cell) return;
+
+    dragging = true;
+    dragMode = !draft.includes(cell.dataset.date);
+
+    /* Sel tempat jari turun ikut ketandain, kalau nggak ketukan biasa
+       nggak ngapa-ngapain dan geser selalu ninggalin sel pertamanya. */
+    setDate(cell.dataset.date, dragMode);
+
+    /* Klik yang nyusul sesudah ini diabaikan; ketukan sudah diurus di
+       sini. Jalur klik disisakan buat keyboard. */
+    dragged = true;
+  });
+
+  grid.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    const cell = dayAt(e.clientX, e.clientY);
+    if (!cell) return;
+
+    const has = draft.includes(cell.dataset.date);
+    if (has === dragMode) return;
+
+    dragged = true;
+    setDate(cell.dataset.date, dragMode);
+  });
+
+  const stop = () => {
+    dragging = false;
+    /* Dilepas setelah event click sempat lewat. */
+    setTimeout(() => (dragged = false), 0);
+  };
+
+  window.addEventListener("pointerup", stop);
+  window.addEventListener("pointercancel", stop);
+}
+
 /* ---------- aksi ---------- */
 
-function toggleDate(date) {
-  const cap = VOTE.maxPicksPerUser;
+function setDate(date, on) {
   const at = draft.indexOf(date);
 
-  if (at >= 0) draft.splice(at, 1);
-  else {
+  if (!on) {
+    if (at >= 0) draft.splice(at, 1);
+  } else {
+    if (at >= 0) return;
+    const cap = VOTE.maxPicksPerUser;
     if (cap > 0 && draft.length >= cap) {
       say(`maks ${cap} tanggal`);
       return;
@@ -214,6 +312,10 @@ function toggleDate(date) {
   Draft.set(me, draft);
   say("");
   renderCalendar();
+}
+
+function toggleDate(date) {
+  setDate(date, !draft.includes(date));
 }
 
 async function submitVote() {
@@ -406,6 +508,7 @@ function initVoting(guest) {
   }
 
   draft = Draft.get(me) || [];
+  initDrag();
   renderCalendar();
 
   loadFirst();

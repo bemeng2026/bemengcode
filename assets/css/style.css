@@ -526,7 +526,14 @@ body[data-stage="loading"] .rest { display: none; }
 .cal__month { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
 .cal__hint { font-size: 12px; color: var(--ink-faint); margin-left: auto; }
 
-.cal__grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.cal__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  /* Biar geser mendatar kebaca sebagai nandain hari, tapi scroll
+     tegak halaman tetap jalan. */
+  touch-action: pan-y;
+}
 
 .cal__dow {
   text-align: center;
@@ -594,16 +601,21 @@ body[data-stage="loading"] .rest { display: none; }
 
 .day--mine .day__n { font-weight: 800; }
 
-/* Titik kecil penanda, kalau-kalau cincinnya kurang kentara. */
+/* Centang kecil: bacanya "gua bisa", bukan sekadar "kepilih". */
 .day--mine::after {
   content: "";
   position: absolute;
-  bottom: 6px;
-  width: 5px;
+  bottom: 7px;
+  width: 9px;
   height: 5px;
-  border-radius: 50%;
-  background: var(--green-deep);
+  border: 2px solid var(--green-deep);
+  border-top: 0;
+  border-right: 0;
+  transform: rotate(-45deg);
 }
+
+.day--h4.day--mine::after,
+.day--h5.day--mine::after { border-color: #fff; }
 
 .day--weekend .day__n { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 
@@ -738,29 +750,78 @@ body[data-stage="done"] { overflow: hidden; }
 .foot .logos { color: var(--ink-faint); }
 
 .thanks__stats {
-  width: min(320px, 100%);
+  width: min(300px, 100%);
   display: grid;
-  gap: 14px;
+  gap: 22px;
+  justify-items: center;
 }
 
-.thanks__mine {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px;
+/* Sebulan penuh, kecil, cuma buat dilihat. */
+.mini {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  width: 100%;
 }
 
-.pick {
-  font-size: 12px;
-  font-weight: 700;
-  padding: 6px 11px;
-  border-radius: 999px;
-  background: var(--green);
-  color: #fff;
+.mini__c {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.55);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink-faint);
   font-variant-numeric: tabular-nums;
 }
 
-.top3--thanks { margin: 0; }
+.mini__c--empty { border: 0; background: none; }
+
+.mini__c--h1 { background: var(--heat-1); color: var(--ink); }
+.mini__c--h2 { background: var(--heat-2); color: var(--ink); }
+.mini__c--h3 { background: var(--heat-3); color: var(--ink); }
+.mini__c--h4 { background: var(--heat-4); color: #fff; }
+.mini__c--h5 { background: var(--heat-5); color: #fff; }
+
+.mini__c--mine { box-shadow: inset 0 0 0 1.5px #fff, inset 0 0 0 3px var(--green-deep); }
+
+/* Tiga teratas, tanpa angka jumlah. */
+.podium {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+}
+
+.pod {
+  display: grid;
+  place-items: center;
+  gap: 1px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: var(--shadow-sm);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.pod--1 { width: 78px; height: 78px; }
+.pod--2 { width: 64px; height: 64px; }
+.pod--3 { width: 56px; height: 56px; }
+
+.pod__d { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; }
+.pod--2 .pod__d { font-size: 19px; }
+.pod--3 .pod__d { font-size: 17px; }
+
+.pod__m { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.7; }
+
+.pod--h1 { background: var(--heat-1); }
+.pod--h2 { background: var(--heat-2); }
+.pod--h3 { background: var(--heat-3); }
+.pod--h4 { background: var(--heat-4); color: #fff; }
+.pod--h5 { background: var(--heat-5); color: #fff; }
 
 .thanks__logos {
   display: flex;

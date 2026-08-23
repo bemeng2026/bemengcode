@@ -16,7 +16,7 @@ const TEXT = {
   gate: "</>",
   loading: "</>",
   seeYou: "see you",
-  votingLabel: "voting tanggal",
+  votingLabel: "kapan kamu bisa",
 
   btn: {
     submit: "submit",
