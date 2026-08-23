@@ -18,6 +18,9 @@ const TEXT = {
   votingLabel: "voting tanggal",
 
   btn: {
+    submit: "submit",
+    back: "back",
+    edit: "edit tanggal",
     refresh: "refresh",
     salin: "salin",
     hapus: "hapus",
@@ -29,11 +32,6 @@ const TEXT = {
     top: "TOP",
     lokal: "lokal",
     sync: "sync",
-  },
-
-  theme: {
-    dark: "dark",
-    light: "light",
   },
 };
 

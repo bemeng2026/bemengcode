@@ -36,12 +36,49 @@ function applyText() {
 
 function codeLines(guest) {
   return `<p class="hero__code">
-    <span class="l">Hi,</span>
-    <span class="l l--ind1"><span class="tg">&gt;</span><span class="name">${esc(guest.name)}</span></span>
-    <span class="l l--ind2 cm">//You are Invited</span>
-    <span class="l l--ind1 tg">&lt;/&gt;</span>
-    <span class="l">}</span>
+    <span class="l" data-rise style="--d:0.10s">Hi,</span>
+    <span class="l l--ind1" data-rise style="--d:0.22s"><span class="tg">&gt;</span><span class="name">${esc(guest.name)}</span></span>
+    <span class="l l--ind2 cm" data-rise style="--d:0.34s">//You are Invited</span>
+    <span class="l l--ind1 tg" data-rise style="--d:0.46s">&lt;/&gt;</span>
+    <span class="l" data-rise style="--d:0.58s">}</span>
   </p>`;
+}
+
+/* ---------- animasi muncul ---------- */
+
+function playRise(scope) {
+  /* Dua frame: yang pertama buat ngecat posisi awal, kalau nggak
+     transisinya kelewat dan elemennya langsung nongol. */
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      scope.querySelectorAll("[data-rise]").forEach((el) => {
+        el.dataset.in = "true";
+      });
+    });
+  });
+}
+
+/* Yang di bawah lipatan baru muncul begitu ke-scroll. */
+function watchRise(scope) {
+  const items = [...scope.querySelectorAll("[data-rise]")];
+  if (!items.length) return;
+
+  if (!("IntersectionObserver" in window)) {
+    items.forEach((el) => (el.dataset.in = "true"));
+    return;
+  }
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        e.target.dataset.in = "true";
+        io.unobserve(e.target);
+      });
+    },
+    { rootMargin: "0px 0px -8% 0px" }
+  );
+  items.forEach((el) => io.observe(el));
 }
 
 /* ---------- siapa yang diundang ---------- */
@@ -69,12 +106,13 @@ function renderHero(guest) {
     </div>
     <div class="hero__body">
       ${codeLines(guest)}
-      <div class="hero__foot">
+      <div class="hero__foot" data-rise style="--d:0.74s">
         <span>// ${esc(EVENT.dateLabel)}</span>
         <a href="https://${esc(EVENT.site)}">${esc(EVENT.site)}</a>
       </div>
     </div>`;
 
+  playRise(host);
   document.title = `${guest.name} — ${EVENT.title} · ${EVENT.org}`;
 }
 
@@ -85,8 +123,8 @@ function renderAgenda() {
   if (!host) return;
 
   host.innerHTML = AGENDA.map(
-    (a) => `
-    <li>
+    (a, i) => `
+    <li data-rise style="--d:${i * 0.09}s">
       <span class="tasks__no">${esc(a.no)}</span>
       <span class="tasks__t">${esc(a.title)}</span>
     </li>`
@@ -100,6 +138,8 @@ function initGate() {
   const gate = $("#gate");
   if (!screen || !gate) return;
 
+  playRise(screen);
+
   const instant = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let done = false;
 
@@ -112,6 +152,7 @@ function initGate() {
     const reveal = () => {
       document.body.dataset.stage = "open";
       $("#agenda").scrollIntoView({ behavior: instant ? "auto" : "smooth" });
+      playRise($("#agenda"));
       setTimeout(armCue, instant ? 0 : 800);
     };
 
@@ -152,47 +193,6 @@ function armCue() {
   window.addEventListener("scroll", onScroll, { passive: true });
 }
 
-/* ---------- tema terang / gelap ---------- */
-
-function initTheme() {
-  const btn = $("#theme");
-  if (!btn) return;
-
-  const KEY = "bemftui2026.theme";
-  let saved = null;
-  try {
-    saved = localStorage.getItem(KEY);
-  } catch {
-    /* diabaikan */
-  }
-  if (saved) document.documentElement.dataset.theme = saved;
-
-  const paint = () => {
-    const dark =
-      document.documentElement.dataset.theme === "dark" ||
-      (!document.documentElement.dataset.theme &&
-        matchMedia("(prefers-color-scheme: dark)").matches);
-    btn.textContent = dark ? t("theme.light") : t("theme.dark");
-    btn.setAttribute("aria-label", dark ? "Ganti ke tema terang" : "Ganti ke tema gelap");
-  };
-
-  btn.addEventListener("click", () => {
-    const dark =
-      document.documentElement.dataset.theme === "dark" ||
-      (!document.documentElement.dataset.theme &&
-        matchMedia("(prefers-color-scheme: dark)").matches);
-    document.documentElement.dataset.theme = dark ? "light" : "dark";
-    try {
-      localStorage.setItem(KEY, document.documentElement.dataset.theme);
-    } catch {
-      /* diabaikan */
-    }
-    paint();
-  });
-
-  paint();
-}
-
 /* ---------- start ---------- */
 
 function boot() {
@@ -200,8 +200,8 @@ function boot() {
   const guest = currentGuest();
   renderHero(guest);
   renderAgenda();
-  initTheme();
   initGate();
+  watchRise($("#voting"));
   initVoting(guest);
 
   const foot = $("#foot-site");

@@ -36,12 +36,16 @@ Semua undangan formatnya sama, cuma nama yang beda — tiap orang dikirimi
 link-nya sendiri. Tambah/ganti orang: array `GUESTS` di `data.js`.
 
 Alur halaman: undangan satu layar penuh, tap `</>` (atau scroll) buat
-loading, lalu agenda dan voting.
+loading, lalu agenda, voting, submit, halaman terima kasih.
+
+Tema light saja. Logo di halaman terima kasih digambar ulang pakai SVG
+inline, bukan aset resmi.
 
 ## Voting
 
-Setelan di `VOTE` (`data.js`): `year`, `month`, `maxParticipants` (20),
-`maxPicksPerUser` (`0` = bebas).
+Siapa yang voting diambil dari `?u=` di link, jadi nggak ada isian
+username. Setelan di `VOTE` (`data.js`): `year`, `month`,
+`maxParticipants` (20), `maxPicksPerUser` (`0` = bebas).
 
 Default `localStorage` — suara per browser, nggak kelihatan antar orang.
 Buat suara bersama, isi `apiUrl` di `config.js`:

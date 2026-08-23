@@ -203,11 +203,17 @@ function say(message) {
 /* ---------- identitas ---------- */
 
 function paintIdentity() {
+  const picked = (votes[me] || []).length;
+
   const nameEl = document.querySelector("#vote-name");
   if (nameEl) nameEl.textContent = me;
 
   const countEl = document.querySelector("#vote-mine");
-  if (countEl) countEl.textContent = String((votes[me] || []).length);
+  if (countEl) countEl.textContent = String(picked);
+
+  /* Nggak ada yang bisa disubmit kalau belum ada tanggal dipilih. */
+  const submit = document.querySelector("#submit");
+  if (submit) submit.disabled = picked === 0;
 }
 
 /* ---------- alat bantu ---------- */
@@ -269,6 +275,36 @@ function initTools() {
   }
 }
 
+/* ---------- submit & halaman terima kasih ---------- */
+
+function initSubmit() {
+  const submit = document.querySelector("#submit");
+  const back = document.querySelector("#thanks-back");
+  const edit = document.querySelector("#thanks-edit");
+
+  if (submit) {
+    submit.addEventListener("click", () => {
+      if (!(votes[me] || []).length) return;
+      document.body.dataset.stage = "done";
+      playRise(document.querySelector("#thanks"));
+    });
+  }
+
+  if (back) {
+    back.addEventListener("click", () => {
+      document.body.dataset.stage = "open";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
+  if (edit) {
+    edit.addEventListener("click", () => {
+      document.body.dataset.stage = "open";
+      document.querySelector("#voting").scrollIntoView({ behavior: "smooth" });
+    });
+  }
+}
+
 async function loadVotes() {
   try {
     votes = await store.read();
@@ -288,6 +324,7 @@ function initVoting(guest) {
   if (mode) mode.textContent = store.mode === "remote" ? t("vote.sync") : t("vote.lokal");
 
   initTools();
+  initSubmit();
   paintIdentity();
   loadVotes();
 }
