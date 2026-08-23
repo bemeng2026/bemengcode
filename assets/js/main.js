@@ -46,6 +46,21 @@ function codeLines(guest) {
 
 /* ---------- logo ---------- */
 
+/* Dipecah tiga supaya "<" dan ">" bisa digerakin merapat ke "/". */
+function markHTML() {
+  return `<span class="mk">
+    <span class="mk__l">&lt;</span><span class="mk__s">/</span><span class="mk__r">&gt;</span>
+  </span>`;
+}
+
+function renderMarks() {
+  document.querySelectorAll("[data-mark]").forEach((el) => {
+    el.innerHTML = markHTML();
+  });
+}
+
+
+
 /* Dipakai di header, footer, dan halaman terakhir dengan ukuran beda,
    jadi digambar sekali di sini. */
 function logosHTML(size) {
@@ -198,7 +213,7 @@ function renderHero(guest) {
     </div>
     <button type="button" class="runbar" id="gate" data-rise style="--d:0.35s"
             aria-label="Lanjut ke agenda">
-      <span class="runbar__mark">${esc(t("gate"))}</span>
+      <span class="runbar__mark" data-mark></span>
       <svg class="runbar__chev" viewBox="0 0 24 14" width="20" height="12" aria-hidden="true">
         <path d="M2 2l10 10L22 2" fill="none" stroke="currentColor"
               stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -206,6 +221,7 @@ function renderHero(guest) {
       <span class="runbar__sweep" aria-hidden="true"></span>
     </button>`;
 
+  renderMarks();
   playGlitch(host);
   playRise(host);
 }
@@ -291,6 +307,7 @@ function armCue() {
 
 function boot() {
   applyText();
+  renderMarks();
   renderLogos();
   const guest = currentGuest();
   renderHero(guest);

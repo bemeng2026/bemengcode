@@ -478,6 +478,36 @@ body[data-stage="loading"] .rest { display: none; }
   letter-spacing: -0.02em;
 }
 
+/* ---------- logo </> ---------- */
+
+.mk {
+  display: inline-flex;
+  align-items: baseline;
+  white-space: nowrap;
+  letter-spacing: 0;
+}
+
+.mk__l,
+.mk__r {
+  display: inline-block;
+  animation: squeeze 2.6s cubic-bezier(0.5, 0, 0.2, 1) infinite;
+}
+
+.mk__r { animation-name: squeezeR; }
+
+/* Kurung merapat ke garis miringnya, lalu balik lagi. */
+@keyframes squeeze {
+  0%, 22% { transform: translateX(0); }
+  42%, 58% { transform: translateX(0.19em); }
+  80%, 100% { transform: translateX(0); }
+}
+
+@keyframes squeezeR {
+  0%, 22% { transform: translateX(0); }
+  42%, 58% { transform: translateX(-0.19em); }
+  80%, 100% { transform: translateX(0); }
+}
+
 /* ---------- petunjuk scroll ---------- */
 
 .cue {
@@ -718,6 +748,25 @@ body[data-stage="loading"] .rest { display: none; }
 }
 
 body[data-stage="done"] .thanks { display: flex; }
+
+/* Layarnya sendiri ikut naik, biar munculnya kerasa bukan cuma
+   ganti halaman gitu aja. */
+body[data-stage="done"] .thanks { animation: veil 0.45s ease-out; }
+
+@keyframes veil {
+  from { opacity: 0; backdrop-filter: blur(0); }
+  to { opacity: 1; }
+}
+
+/* Isi halaman terakhir naik lebih jauh dan sedikit membesar. */
+.thanks [data-rise] {
+  transform: translateY(26px) scale(0.965);
+  transition: opacity 0.72s cubic-bezier(0.22, 0.72, 0.24, 1),
+              transform 0.72s cubic-bezier(0.22, 0.72, 0.24, 1);
+  transition-delay: var(--d, 0s);
+}
+
+.thanks [data-rise][data-in="true"] { transform: none; }
 body[data-stage="done"] { overflow: hidden; }
 
 .thanks__see {

@@ -28,9 +28,6 @@ const TEXT = {
   },
 
   vote: {
-    orang: "ORANG",
-    tag: "TAG",
-    top: "TOP",
     lokal: "lokal",
     sync: "sync",
   },

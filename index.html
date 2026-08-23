@@ -20,7 +20,7 @@
 
 <header class="topbar">
   <div class="topbar__in">
-    <span class="topbar__mark" data-text="mark">&lt;/&gt;</span>
+    <span class="topbar__mark" data-mark></span>
     <a class="topbar__brand" href="https://www.bemftui2026.com" data-text="brand">www.bemftui2026.com</a>
     <span id="logos-head" class="logos-slot"></span>
   </div>
@@ -35,7 +35,7 @@
   </section>
 
   <div class="load" id="load" aria-hidden="true">
-    <span class="load__mark" data-text="loading">&lt;/&gt;</span>
+    <span class="load__mark" data-mark></span>
     <span class="load__bar"><span class="load__fill"></span></span>
   </div>
 
@@ -60,27 +60,11 @@
         <div class="panel" data-rise style="--d:0.08s">
           <div class="who" id="vote-who">
             <span>&gt; <strong id="vote-name"></strong></span>
-            <span class="comment" id="vote-mine"></span>
           </div>
 
           <div class="roster" id="roster"></div>
 
-          <ol class="top3" id="top3"></ol>
-
-          <div class="stats">
-            <div class="stat">
-              <div class="stat__k" data-text="vote.orang">ORANG</div>
-              <div class="stat__v" id="stat-people">0/20</div>
-            </div>
-            <div class="stat">
-              <div class="stat__k" data-text="vote.tag">TAG</div>
-              <div class="stat__v" id="stat-tags">0</div>
-            </div>
-            <div class="stat">
-              <div class="stat__k" data-text="vote.top">TOP</div>
-              <div class="stat__v" id="stat-top">&mdash;</div>
-            </div>
-          </div>
+          <div class="podium" id="top3"></div>
 
           <div class="tools">
             <button class="btn btn--ghost" type="button" id="tool-reset" data-text="btn.hapus">hapus</button>
@@ -116,18 +100,18 @@
 </main>
 
 <section class="thanks" id="thanks" aria-label="Terima kasih">
-  <p class="thanks__see" data-rise data-text="seeYou">see you</p>
+  <p class="thanks__see" data-rise style="--d:0.06s" data-text="seeYou">see you</p>
 
-  <div class="thanks__stats" data-rise style="--d:0.14s">
+  <div class="thanks__stats" data-rise style="--d:0.22s">
     <div class="mini" id="thanks-mini"></div>
     <div class="podium" id="thanks-podium"></div>
   </div>
 
-  <div class="thanks__logos" id="logos-thanks" data-rise style="--d:0.30s"></div>
+  <div class="thanks__logos" id="logos-thanks" data-rise style="--d:0.46s"></div>
 
-  <div class="thanks__sign" data-rise style="--d:0.36s" data-text="mark">&lt;/&gt;</div>
+  <div class="thanks__sign" data-rise style="--d:0.62s" data-mark></div>
 
-  <div class="thanks__actions" data-rise style="--d:0.52s">
+  <div class="thanks__actions" data-rise style="--d:0.78s">
     <button class="btn btn--ghost" type="button" id="thanks-back" data-text="btn.back">back</button>
     <button class="btn" type="button" id="thanks-edit" data-text="btn.edit">edit tanggal</button>
   </div>

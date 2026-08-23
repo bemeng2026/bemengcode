@@ -103,7 +103,6 @@ function renderCalendar() {
               aria-label="${esc(`${d} ${MONTHS[month - 1]} ${year} — ${taggers.length} suara`)}"
               aria-pressed="${mine.has(date)}">
         <span class="day__n">${d}</span>
-        <span class="day__c">${taggers.length || ""}</span>
       </button>`);
   }
 
@@ -120,7 +119,6 @@ function renderCalendar() {
   if (label) label.textContent = `${MONTHS[month - 1]} ${year}`;
 
   renderTop3(counts, max);
-  renderStats(counts);
   renderRoster();
   paintIdentity();
   renderThanks(counts, max);
@@ -137,27 +135,27 @@ function rankRows(counts) {
   );
 }
 
-function top3HTML(counts, max) {
+/* Tiga tanggal terbanyak sebagai kotak, gede-kecil ikut peringkat.
+   Tanpa angka — warnanya sudah cukup ngasih tahu. */
+function podiumHTML(counts, max) {
   const rows = rankRows(counts).slice(0, 3);
-  if (!rows.length) return '<li class="empty">&mdash;</li>';
+  if (!rows.length) return '<span class="empty">&mdash;</span>';
 
   return rows
     .map(([date, users], i) => {
-      const pct = max ? Math.round((users.length / max) * 100) : 0;
+      const level = heatLevel(users.length, max);
       return `
-        <li title="${esc(users.join(", "))}">
-          <span class="top3__pos">${i + 1}</span>
-          <span class="top3__date">${dayLabel(date)}</span>
-          <span class="top3__bar"><span style="width:${pct}%"></span></span>
-          <span class="top3__n">${users.length}</span>
-        </li>`;
+        <span class="pod pod--${i + 1} ${level ? `pod--h${level}` : ""}">
+          <span class="pod__d">${Number(date.slice(8, 10))}</span>
+          <span class="pod__m">${MONTHS[VOTE.month - 1].slice(0, 3)}</span>
+        </span>`;
     })
     .join("");
 }
 
 function renderTop3(counts, max) {
   const host = document.querySelector("#top3");
-  if (host) host.innerHTML = top3HTML(counts, max);
+  if (host) host.innerHTML = podiumHTML(counts, max);
 }
 
 /* Halaman terakhir: seluruh bulan sebagai heatmap, lalu tiga tanggal
@@ -188,39 +186,7 @@ function renderThanks(counts, max) {
   }
 
   const podium = document.querySelector("#thanks-podium");
-  if (!podium) return;
-
-  const rows = rankRows(counts).slice(0, 3);
-  podium.innerHTML = rows.length
-    ? rows
-        .map(([date, users], i) => {
-          const level = heatLevel(users.length, max);
-          return `
-        <span class="pod pod--${i + 1} ${level ? `pod--h${level}` : ""}">
-          <span class="pod__d">${Number(date.slice(8, 10))}</span>
-          <span class="pod__m">${MONTHS[VOTE.month - 1].slice(0, 3)}</span>
-        </span>`;
-        })
-        .join("")
-    : '<span class="empty">&mdash;</span>';
-}
-
-function renderStats(counts) {
-  const people = Object.keys(votes).filter((u) => votes[u].dates.length).length;
-  const tags = [...counts.values()].reduce((sum, u) => sum + u.length, 0);
-  const best = [...counts.entries()].sort((a, b) => b[1].length - a[1].length)[0];
-
-  const set = (id, value) => {
-    const el = document.querySelector(id);
-    if (el) el.textContent = value;
-  };
-
-  set("#stat-people", `${people}/${GUESTS.length}`);
-  set("#stat-tags", String(tags));
-  set(
-    "#stat-top",
-    best ? `${Number(best[0].slice(8, 10))} ${MONTHS[VOTE.month - 1].slice(0, 3)}` : "—"
-  );
+  if (podium) podium.innerHTML = podiumHTML(counts, max);
 }
 
 /* Siapa dari 12 orang yang sudah submit. */
@@ -387,9 +353,6 @@ function paintIdentity() {
   const nameEl = document.querySelector("#vote-name");
   if (nameEl) nameEl.textContent = me;
 
-  const countEl = document.querySelector("#vote-mine");
-  if (countEl) countEl.textContent = String(draft.length);
-
   const btn = document.querySelector("#submit");
   if (!btn) return;
 
@@ -400,6 +363,20 @@ function paintIdentity() {
 
   btn.disabled = draft.length === 0 || unchanged;
   btn.textContent = sent ? t("btn.resubmit") : t("btn.submit");
+}
+
+/* Dibalikin ke keadaan awal dulu, kalau nggak animasinya cuma jalan
+   sekali karena data-in-nya masih nempel dari kunjungan sebelumnya. */
+function showThanks() {
+  const screen = document.querySelector("#thanks");
+  if (!screen) return;
+
+  screen.querySelectorAll("[data-rise]").forEach((el) => {
+    delete el.dataset.in;
+  });
+
+  document.body.dataset.stage = "done";
+  playRise(screen);
 }
 
 /* ---------- sinkron ---------- */
@@ -465,8 +442,7 @@ function initVoting(guest) {
   if (submit) {
     submit.addEventListener("click", async () => {
       if (await submitVote()) {
-        document.body.dataset.stage = "done";
-        playRise(document.querySelector("#thanks"));
+        showThanks();
       }
     });
   }
