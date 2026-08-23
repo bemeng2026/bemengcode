@@ -108,40 +108,59 @@ function renderCalendar() {
   const label = document.querySelector("#cal-month");
   if (label) label.textContent = `${MONTHS[month - 1]} ${year}`;
 
-  renderRanking(counts, max);
+  renderTop3(counts, max);
   renderStats(counts);
   renderRoster();
   paintIdentity();
+  renderThanks(counts, max);
 }
 
-/* ---------- papan peringkat ---------- */
+/* ---------- tiga tanggal terbanyak ---------- */
 
-function renderRanking(counts, max) {
-  const host = document.querySelector("#rank");
-  if (!host) return;
+const dayLabel = (date) =>
+  `${Number(date.slice(8, 10))} ${MONTHS[VOTE.month - 1].slice(0, 3)}`;
 
-  const rows = [...counts.entries()]
-    .sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]))
-    .slice(0, 8);
+function rankRows(counts) {
+  return [...counts.entries()].sort(
+    (a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0])
+  );
+}
 
-  if (!rows.length) {
-    host.innerHTML = '<li class="empty">&mdash;</li>';
-    return;
-  }
+function top3HTML(counts, max) {
+  const rows = rankRows(counts).slice(0, 3);
+  if (!rows.length) return '<li class="empty">&mdash;</li>';
 
-  host.innerHTML = rows
+  return rows
     .map(([date, users], i) => {
-      const day = Number(date.slice(8, 10));
       const pct = max ? Math.round((users.length / max) * 100) : 0;
       return `
         <li title="${esc(users.join(", "))}">
-          <span class="rank__pos">${i + 1}.</span>
-          <span class="rank__date">${day} ${MONTHS[VOTE.month - 1].slice(0, 3)}</span>
-          <span class="rank__bar"><span class="rank__fill" style="width:${pct}%"></span></span>
-          <span class="rank__n">${users.length}</span>
+          <span class="top3__pos">${i + 1}</span>
+          <span class="top3__date">${dayLabel(date)}</span>
+          <span class="top3__bar"><span style="width:${pct}%"></span></span>
+          <span class="top3__n">${users.length}</span>
         </li>`;
     })
     .join("");
+}
+
+function renderTop3(counts, max) {
+  const host = document.querySelector("#top3");
+  if (host) host.innerHTML = top3HTML(counts, max);
+}
+
+/* Halaman terakhir: tanggal pilihan orang ini + hasil sementara. */
+function renderThanks(counts, max) {
+  const mine = document.querySelector("#thanks-mine");
+  if (mine) {
+    const sent = votes[me] ? votes[me].dates : [];
+    mine.innerHTML = sent.length
+      ? sent.map((d) => `<span class="pick">${dayLabel(d)}</span>`).join("")
+      : '<span class="empty">&mdash;</span>';
+  }
+
+  const top = document.querySelector("#thanks-top3");
+  if (top) top.innerHTML = top3HTML(counts, max);
 }
 
 function renderStats(counts) {
@@ -205,8 +224,8 @@ async function submitVote() {
   /* Baca ulang dulu supaya submit orang lain nggak ketimpa. */
   try {
     votes = await store.read();
-  } catch {
-    say("gagal kirim");
+  } catch (e) {
+    say(reachMsg(e));
     return;
   }
 
@@ -214,8 +233,8 @@ async function submitVote() {
 
   try {
     await store.write(votes);
-  } catch {
-    say("gagal kirim");
+  } catch (e) {
+    say(reachMsg(e));
     return;
   }
 
@@ -245,6 +264,14 @@ async function clearVote() {
 
   lastSeen = JSON.stringify(votes);
   renderCalendar();
+}
+
+/* Kalau fetch-nya sendiri yang ditolak (bukan status HTTP), berarti
+   halaman ini nggak diizinkan nyambung keluar — bukan salah server. */
+function reachMsg(err) {
+  const m = String((err && err.message) || err);
+  if (/^(GET|PUT) \d+/.test(m)) return `server nolak (${m})`;
+  return "halaman ini nggak bisa nyambung ke server voting";
 }
 
 function say(message) {
@@ -277,8 +304,8 @@ async function pull() {
   let fresh;
   try {
     fresh = await store.read();
-  } catch {
-    say("gagal muat");
+  } catch (e) {
+    say(reachMsg(e));
     return;
   }
 
@@ -294,14 +321,27 @@ function startPolling() {
   const every = VOTE.pollSeconds * 1000;
   if (!every) return;
 
+  const section = document.querySelector("#voting");
+  let onScreen = true;
+
+  /* Kuota JSONBin gratis nggak besar, jadi jangan narik data pas
+     kalendernya nggak kelihatan — tab di background atau orangnya
+     masih di bagian undangan. */
+  if (section && "IntersectionObserver" in window) {
+    onScreen = false;
+    new IntersectionObserver((entries) => {
+      onScreen = entries.some((e) => e.isIntersecting);
+      if (onScreen) pull();
+    }).observe(section);
+  }
+
   const tick = () => {
-    if (document.visibilityState === "visible") pull();
+    if (document.visibilityState === "visible" && onScreen) pull();
   };
 
   clearInterval(poll);
   poll = setInterval(tick, every);
 
-  /* Balik ke tab ini = langsung tarik data terbaru. */
   document.addEventListener("visibilitychange", tick);
 }
 
@@ -374,9 +414,9 @@ async function loadFirst() {
   try {
     votes = await store.read();
     lastSeen = JSON.stringify(votes);
-  } catch {
+  } catch (e) {
     votes = {};
-    say("gagal muat");
+    say(reachMsg(e));
   }
 
   /* Kalau sudah pernah submit dan belum ada draft, pakai yang tersubmit. */

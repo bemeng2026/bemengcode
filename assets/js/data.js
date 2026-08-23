@@ -72,5 +72,5 @@ const VOTE = {
   year: 2026,
   month: 9,
   maxPicksPerUser: 0, /* 0 = bebas, isi angka kalau mau dibatasi */
-  pollSeconds: 5,     /* seberapa sering narik data orang lain */
+  pollSeconds: 10,    /* seberapa sering narik data orang lain */
 };
