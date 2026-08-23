@@ -59,7 +59,7 @@ const EVENT = {
   title: "Malam Sekolah Media",
   org: "BEM FTUI 2026",
   dateLabel: "__.09.2026",
-  site: "www.bemftui.com",
+  site: "www.bemftui2026.com",
 };
 
 /* 12 undangan — formatnya sama semua, cuma nama yang beda. */

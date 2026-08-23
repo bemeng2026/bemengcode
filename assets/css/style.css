@@ -27,8 +27,7 @@
   --heat-4: #2563eb;
   --heat-5: #1541a8;
 
-  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo,
-    Consolas, "Liberation Mono", monospace;
+  --font: "Helvetica Neue", Helvetica, Arial, "Segoe UI", Roboto, sans-serif;
   --radius: 10px;
   --maxw: 1080px;
 }
@@ -91,6 +90,8 @@
 *::before,
 *::after { box-sizing: border-box; }
 
+[hidden] { display: none !important; }
+
 html { scroll-behavior: smooth; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -105,7 +106,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font-family: var(--mono);
+  font-family: var(--font);
   font-size: 15px;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
@@ -173,7 +174,7 @@ a { color: var(--blue); }
   border: 1px solid var(--line);
   background: var(--bg-alt);
   color: var(--ink-soft);
-  font-family: var(--mono);
+  font-family: var(--font);
   font-size: 13px;
   padding: 6px 10px;
   border-radius: 6px;
@@ -266,7 +267,7 @@ a { color: var(--blue); }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: var(--mono);
+  font-family: var(--font);
   font-size: 14px;
   font-weight: 600;
   padding: 11px 18px;
@@ -373,7 +374,7 @@ a { color: var(--blue); }
 
 .input {
   width: 100%;
-  font-family: var(--mono);
+  font-family: var(--font);
   font-size: 14px;
   padding: 10px 12px;
   border-radius: 8px;
@@ -386,7 +387,7 @@ a { color: var(--blue); }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
 
 .chip {
-  font-family: var(--mono);
+  font-family: var(--font);
   font-size: 12px;
   padding: 4px 9px;
   border-radius: 999px;
@@ -414,7 +415,7 @@ a { color: var(--blue); }
   background: none;
   border: 0;
   color: var(--ink-faint);
-  font-family: var(--mono);
+  font-family: var(--font);
   font-size: 12px;
   cursor: pointer;
   text-decoration: underline;
@@ -447,7 +448,7 @@ a { color: var(--blue); }
   border-radius: 8px;
   background: var(--heat-0);
   color: var(--ink);
-  font-family: var(--mono);
+  font-family: var(--font);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
