@@ -208,7 +208,6 @@ function renderHero(guest) {
 
   playGlitch(host);
   playRise(host);
-  document.title = `${guest.name} — ${EVENT.title} · ${EVENT.org}`;
 }
 
 /* ---------- slide 2: agenda ---------- */

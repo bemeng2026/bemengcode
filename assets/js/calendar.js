@@ -291,7 +291,9 @@ function paintIdentity() {
   const btn = document.querySelector("#submit");
   if (!btn) return;
 
-  const sent = votes[me] ? votes[me].dates : null;
+  /* Seed bikin 12 entri kosong duluan, jadi "pernah submit" diukur dari
+     ada-nya tanggal, bukan ada-nya entri. */
+  const sent = votes[me] && votes[me].dates.length ? votes[me].dates : null;
   const unchanged = sent !== null && sameDates(sent, draft);
 
   btn.disabled = draft.length === 0 || unchanged;
