@@ -3,7 +3,8 @@
 
    CARA PALING CEPAT — JSONBin (bisa dari HP):
      1. Buka jsonbin.io, daftar gratis.
-     2. Create Bin, isi kotaknya dengan dua karakter:  {}
+     2. Create Bin, tempel isi file vote-seed.json di repo ini.
+        (JSONBin nolak bin kosong, jadi jangan diisi {} doang.)
      3. Simpan. Lihat URL-nya, contoh:
         https://jsonbin.io/68abc1234567890abcdef123
         Bagian belakangnya itu BIN ID.

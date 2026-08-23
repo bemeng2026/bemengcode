@@ -52,8 +52,8 @@ Yang masuk heatmap hanya yang sudah submit. Deretan chip di panel kiri
 nunjukin siapa dari 12 orang yang sudah masuk.
 
 Default `localStorage` — suara per browser, nggak kelihatan antar orang.
-Buat papan bersama, cara tercepat lewat JSONBin: bikin bin berisi `{}`,
-lalu isi `config.js`:
+Buat papan bersama, cara tercepat lewat JSONBin: bikin bin berisi isi
+`vote-seed.json` (JSONBin nolak bin kosong), lalu isi `config.js`:
 
 ```js
 window.BEMFTUI_CONFIG = {
