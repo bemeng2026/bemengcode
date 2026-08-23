@@ -22,8 +22,8 @@
    ========================================================= */
 
 window.BEMFTUI_CONFIG = {
-  jsonbinId: null,
-  jsonbinKey: null,
+  jsonbinId: "6a8aff9eda38895dfe06fb12",
+  jsonbinKey: "$2a$10$hMVVGfgovOSq1.3B7MdA8uAT79S/WPrNGTrV/caNU0WtpU9XtL96y",
 
   /* Atau endpoint sendiri yang melayani GET dan PUT JSON. */
   apiUrl: null,
