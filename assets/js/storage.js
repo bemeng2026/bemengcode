@@ -4,7 +4,6 @@
    ========================================================= */
 
 const STORE_KEY = "bemftui2026.vote.v1";
-const USER_KEY = "bemftui2026.user.v1";
 
 function safeParse(raw, fallback) {
   if (!raw) return fallback;
@@ -73,22 +72,3 @@ function makeStore() {
   return LocalStore;
 }
 
-/* --- preferensi kecil di browser --- */
-
-const Prefs = {
-  getUser() {
-    try {
-      return localStorage.getItem(USER_KEY) || "";
-    } catch {
-      return "";
-    }
-  },
-  setUser(name) {
-    try {
-      if (name) localStorage.setItem(USER_KEY, name);
-      else localStorage.removeItem(USER_KEY);
-    } catch {
-      /* diabaikan */
-    }
-  },
-};

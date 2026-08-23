@@ -18,16 +18,12 @@ const TEXT = {
   votingLabel: "voting tanggal",
 
   btn: {
-    masuk: "masuk",
-    ganti: "ganti",
     refresh: "refresh",
     salin: "salin",
     hapus: "hapus",
   },
 
   vote: {
-    username: "USERNAME",
-    placeholder: "kean",
     orang: "ORANG",
     tag: "TAG",
     top: "TOP",
@@ -78,5 +74,4 @@ const VOTE = {
   month: 9,
   maxParticipants: 20,
   maxPicksPerUser: 0, /* 0 = bebas, isi angka kalau mau dibatasi */
-  suggestedUsernames: GUESTS.map((g) => g.slug),
 };

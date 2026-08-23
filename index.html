@@ -30,7 +30,10 @@
   <section class="screen" id="undanganku">
     <div class="wrap">
       <article class="card" id="hero-card"></article>
-      <button type="button" class="gate" id="gate" data-text="gate">&lt;/&gt;</button>
+      <button type="button" class="gate" id="gate" aria-label="Lanjut ke agenda">
+        <span class="gate__mark" data-text="gate">&lt;/&gt;</span>
+        <span class="gate__ring" aria-hidden="true"></span>
+      </button>
     </div>
   </section>
 
@@ -42,6 +45,12 @@
   <section class="section rest" id="agenda">
     <div class="wrap">
       <ol class="tasks" id="agenda-list"></ol>
+      <div class="cue" id="cue" aria-hidden="true">
+        <svg viewBox="0 0 24 14" width="26" height="15">
+          <path d="M2 2l10 10L22 2" fill="none" stroke="currentColor"
+                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
     </div>
   </section>
 
@@ -52,21 +61,9 @@
       <div class="vote">
 
         <div class="panel">
-          <form id="vote-form">
-            <label class="field">
-              <span class="field__label" data-text="vote.username">USERNAME</span>
-              <input class="input" id="vote-input" type="text" autocomplete="off"
-                     placeholder="kean" data-placeholder="vote.placeholder"
-                     maxlength="20" spellcheck="false">
-            </label>
-            <button class="btn" type="submit" data-text="btn.masuk">masuk</button>
-            <div class="chips" id="vote-chips"></div>
-          </form>
-
-          <div class="who" id="vote-who" hidden>
+          <div class="who" id="vote-who">
             <span>&gt; <strong id="vote-name"></strong></span>
             <span class="comment" id="vote-mine"></span>
-            <button type="button" id="vote-swap" data-text="btn.ganti">ganti</button>
           </div>
 
           <ul class="rank" id="rank"></ul>

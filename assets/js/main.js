@@ -112,6 +112,7 @@ function initGate() {
     const reveal = () => {
       document.body.dataset.stage = "open";
       $("#agenda").scrollIntoView({ behavior: instant ? "auto" : "smooth" });
+      setTimeout(armCue, instant ? 0 : 800);
     };
 
     if (instant) {
@@ -130,6 +131,25 @@ function initGate() {
   gate.addEventListener("click", open);
   screen.addEventListener("wheel", onScrollDown, { passive: true });
   screen.addEventListener("touchmove", onScrollDown, { passive: true });
+}
+
+/* ---------- petunjuk scroll ---------- */
+
+/* Cue-nya hilang setelah orangnya benar-benar scroll, bukan sekadar
+   begitu section voting kesenggol layar. */
+function armCue() {
+  const cue = $("#cue");
+  if (!cue) return;
+
+  const base = window.scrollY;
+
+  const onScroll = () => {
+    if (window.scrollY - base < 80) return;
+    cue.dataset.seen = "true";
+    window.removeEventListener("scroll", onScroll);
+  };
+
+  window.addEventListener("scroll", onScroll, { passive: true });
 }
 
 /* ---------- tema terang / gelap ---------- */
@@ -182,7 +202,7 @@ function boot() {
   renderAgenda();
   initTheme();
   initGate();
-  initVoting();
+  initVoting(guest);
 
   const foot = $("#foot-site");
   if (foot) {

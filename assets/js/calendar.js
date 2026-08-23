@@ -17,20 +17,12 @@ const store = makeStore();
 
 /* seluruh voting: { username: ["2026-09-09", ...] } */
 let votes = {};
+
+/* siapa yang voting ditentukan link undangannya, bukan diketik */
 let me = "";
 
 const iso = (y, m, d) =>
   `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-
-/* username: huruf kecil, angka, titik, strip, underscore */
-function normalizeUser(raw) {
-  return String(raw || "")
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "")
-    .replace(/[^a-z0-9._-]/g, "")
-    .slice(0, 20);
-}
 
 /* ---------- hitung-hitungan ---------- */
 
@@ -97,8 +89,7 @@ function renderCalendar() {
               data-date="${date}"
               title="${esc(who)}"
               aria-label="${esc(label)}"
-              aria-pressed="${mine.has(date)}"
-              ${me ? "" : "disabled"}>
+              aria-pressed="${mine.has(date)}">
         <span class="day__n">${d}</span>
         <span class="day__c">${taggers.length || ""}</span>
       </button>`);
@@ -211,27 +202,12 @@ function say(message) {
 
 /* ---------- identitas ---------- */
 
-function setUser(name) {
-  me = normalizeUser(name);
-  Prefs.setUser(me);
-  renderCalendar();
-}
-
 function paintIdentity() {
-  const form = document.querySelector("#vote-form");
-  const who = document.querySelector("#vote-who");
-  if (!form || !who) return;
-
-  form.hidden = Boolean(me);
-  who.hidden = !me;
-
   const nameEl = document.querySelector("#vote-name");
-  if (nameEl) nameEl.textContent = me || "";
+  if (nameEl) nameEl.textContent = me;
 
   const countEl = document.querySelector("#vote-mine");
-  if (countEl) {
-    countEl.textContent = String((votes[me] || []).length);
-  }
+  if (countEl) countEl.textContent = String((votes[me] || []).length);
 }
 
 /* ---------- alat bantu ---------- */
@@ -305,67 +281,13 @@ async function loadVotes() {
 
 /* ---------- start ---------- */
 
-function initVoting() {
-  const form = document.querySelector("#vote-form");
-  const input = document.querySelector("#vote-input");
-  const chips = document.querySelector("#vote-chips");
-  const swap = document.querySelector("#vote-swap");
-
-  if (chips) {
-    chips.innerHTML = VOTE.suggestedUsernames
-      .map((u) => `<button type="button" class="chip" data-user="${esc(u)}">${esc(u)}</button>`)
-      .join("");
-    chips.querySelectorAll("[data-user]").forEach((chip) => {
-      chip.addEventListener("click", () => {
-        if (input) input.value = chip.dataset.user;
-        tryJoin(chip.dataset.user);
-      });
-    });
-  }
-
-  if (form) {
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      tryJoin(input ? input.value : "");
-    });
-  }
-
-  if (swap) {
-    swap.addEventListener("click", () => {
-      me = "";
-      Prefs.setUser("");
-      if (input) input.value = "";
-      paintIdentity();
-      renderCalendar();
-      say("");
-    });
-  }
+function initVoting(guest) {
+  me = guest ? guest.slug : "";
 
   const mode = document.querySelector("#vote-mode");
-  if (mode) {
-    mode.textContent = store.mode === "remote" ? t("vote.sync") : t("vote.lokal");
-  }
+  if (mode) mode.textContent = store.mode === "remote" ? t("vote.sync") : t("vote.lokal");
 
-  me = normalizeUser(Prefs.getUser());
   initTools();
   paintIdentity();
   loadVotes();
-}
-
-function tryJoin(raw) {
-  const name = normalizeUser(raw);
-  if (name.length < 2) {
-    say("username min. 2 karakter");
-    return;
-  }
-
-  const isNew = !Object.prototype.hasOwnProperty.call(votes, name);
-  const filled = Object.keys(votes).length;
-  if (isNew && filled >= VOTE.maxParticipants) {
-    say("kuota penuh");
-    return;
-  }
-
-  say("");
-  setUser(name);
 }
