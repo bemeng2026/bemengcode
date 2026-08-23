@@ -1,5 +1,5 @@
 /* =========================================================
-   Render isi halaman: undangan, agenda, persiapan, galeri.
+   Render isi halaman: undangan, agenda, galeri.
    ========================================================= */
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -36,21 +36,13 @@ function applyText() {
 
 function codeLines(guest, { big }) {
   const cls = big ? "hero__code" : "inv__code";
-  const rows = guest.code.map((line) => {
-    switch (line.t) {
-      case "prompt": {
-        const prefix = line.p === undefined ? "&gt;" : esc(line.p);
-        return `<span class="l l--ind1"><span class="tg">${prefix}</span><span class="name">${esc(line.v)}</span></span>`;
-      }
-      case "comment":
-        return `<span class="l l--ind2 cm">${esc(line.v)}</span>`;
-      case "tag":
-        return `<span class="l l--ind1 tg">${esc(line.v)}</span>`;
-      default:
-        return `<span class="l">${esc(line.v)}</span>`;
-    }
-  });
-  return `<p class="${cls}">${rows.join("")}</p>`;
+  return `<p class="${cls}">
+    <span class="l">Hi,</span>
+    <span class="l l--ind1"><span class="tg">&gt;</span><span class="name">${esc(guest.name)}</span></span>
+    <span class="l l--ind2 cm">//You are Invited</span>
+    <span class="l l--ind1 tg">&lt;/&gt;</span>
+    <span class="l">}</span>
+  </p>`;
 }
 
 /* ---------- siapa yang diundang ---------- */
@@ -78,16 +70,9 @@ function renderHero(guest) {
     </div>
     <div class="hero__body">
       ${codeLines(guest, { big: true })}
-      <dl class="hero__meta">
-        <div><dt>${esc(t("meta.acara"))}</dt><dd>${esc(EVENT.title)}</dd></div>
-        <div><dt>${esc(t("meta.tanggal"))}</dt><dd>// ${esc(EVENT.dateLabel)}</dd></div>
-        <div><dt>${esc(t("meta.tempat"))}</dt><dd>${esc(EVENT.place)}</dd></div>
-        <div><dt>${esc(t("meta.dress"))}</dt><dd>${esc(EVENT.dressCode)}</dd></div>
-      </dl>
-      <div class="hero__actions">
-        <a class="btn" href="#voting">${esc(t("btn.voting"))}</a>
-        <a class="btn btn--ghost" href="#agenda">${esc(t("btn.agenda"))}</a>
-        <a class="btn btn--ghost" href="#undangan">${esc(t("btn.variant"))}</a>
+      <div class="hero__foot">
+        <span>// ${esc(EVENT.dateLabel)}</span>
+        <a href="https://${esc(EVENT.site)}">${esc(EVENT.site)}</a>
       </div>
     </div>`;
 
@@ -104,60 +89,9 @@ function renderAgenda() {
     (a) => `
     <article class="ag">
       <div class="ag__no">${esc(a.no)}</div>
-      <div>
-        <span class="ag__tag">${esc(a.tag)}</span>
-        <h3 class="ag__title">${esc(a.title)}</h3>
-        <ul class="ag__items">
-          ${a.items.map((i) => `<li>${esc(i)}</li>`).join("")}
-        </ul>
-      </div>
+      <h3 class="ag__title">${esc(a.title)}</h3>
     </article>`
   ).join("");
-}
-
-/* ---------- slide 3: to do & persiapan ---------- */
-
-function checkItem(id, item, index) {
-  const key = `${id}-${index}`;
-  const box = `<input type="checkbox" id="ck-${esc(key)}" data-prep="${esc(key)}">`;
-  const text = item.url
-    ? `<span class="check__label"><a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">${esc(item.label)} &nearr;</a></span>`
-    : `<label for="ck-${esc(key)}"><span class="check__label">${esc(item.label)}</span></label>`;
-  return `<li>${box}${text}</li>`;
-}
-
-function renderPrep() {
-  const map = [
-    ["#prep-todo", "todo", PREP.todo],
-    ["#prep-download", "dl", PREP.download],
-    ["#prep-bring", "bring", PREP.bring],
-  ];
-
-  map.forEach(([sel, id, items]) => {
-    const host = $(sel);
-    if (host) host.innerHTML = items.map((it, i) => checkItem(id, it, i)).join("");
-  });
-
-  const saved = Prefs.getPrep();
-  document.querySelectorAll("[data-prep]").forEach((box) => {
-    box.checked = Boolean(saved[box.dataset.prep]);
-    box.addEventListener("change", () => {
-      const next = Prefs.getPrep();
-      if (box.checked) next[box.dataset.prep] = true;
-      else delete next[box.dataset.prep];
-      Prefs.setPrep(next);
-      updatePrepCount();
-    });
-  });
-
-  updatePrepCount();
-}
-
-function updatePrepCount() {
-  const boxes = document.querySelectorAll("[data-prep]");
-  const done = document.querySelectorAll("[data-prep]:checked").length;
-  const el = $("#prep-count");
-  if (el) el.textContent = `${done}/${boxes.length}`;
 }
 
 /* ---------- galeri 12 undangan ---------- */
@@ -168,12 +102,10 @@ function renderGallery(active) {
 
   host.innerHTML = GUESTS.map(
     (g) => `
-    <a class="inv inv--${esc(g.accent)}"
+    <a class="inv"
        href="?u=${encodeURIComponent(g.slug)}"
        aria-current="${g.slug === active.slug}">
-      <span class="inv__who">${esc(g.name)}</span>
       ${codeLines(g, { big: false })}
-      <span class="inv__mark">&lt;/&gt;</span>
       <span class="inv__site">${esc(EVENT.site)}</span>
     </a>`
   ).join("");
@@ -227,13 +159,15 @@ function boot() {
   const guest = currentGuest();
   renderHero(guest);
   renderAgenda();
-  renderPrep();
   renderGallery(guest);
   initTheme();
   initVoting();
 
-  const year = $("#year");
-  if (year) year.textContent = new Date().getFullYear();
+  const foot = $("#foot-site");
+  if (foot) {
+    foot.textContent = EVENT.site;
+    foot.href = `https://${EVENT.site}`;
+  }
 }
 
 document.addEventListener("DOMContentLoaded", boot);

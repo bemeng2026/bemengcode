@@ -5,7 +5,6 @@
 
 const STORE_KEY = "bemftui2026.vote.v1";
 const USER_KEY = "bemftui2026.user.v1";
-const PREP_KEY = "bemftui2026.prep.v1";
 
 function safeParse(raw, fallback) {
   if (!raw) return fallback;
@@ -88,20 +87,6 @@ const Prefs = {
     try {
       if (name) localStorage.setItem(USER_KEY, name);
       else localStorage.removeItem(USER_KEY);
-    } catch {
-      /* diabaikan */
-    }
-  },
-  getPrep() {
-    try {
-      return safeParse(localStorage.getItem(PREP_KEY), {});
-    } catch {
-      return {};
-    }
-  },
-  setPrep(map) {
-    try {
-      localStorage.setItem(PREP_KEY, JSON.stringify(map));
     } catch {
       /* diabaikan */
     }

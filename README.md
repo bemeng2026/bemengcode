@@ -12,7 +12,7 @@ python3 -m http.server 8000
 index.html
 assets/css/style.css
 assets/js/config.js     # endpoint voting
-assets/js/data.js       # tamu, agenda, persiapan, setelan voting
+assets/js/data.js       # teks, tamu, agenda, setelan voting
 assets/js/storage.js    # localStorage / endpoint
 assets/js/calendar.js   # kalender + heatmap
 assets/js/main.js       # render
@@ -21,8 +21,8 @@ assets/js/main.js       # render
 ## Ngedit teks
 
 Semua tulisan yang tampil di halaman ada di `assets/js/data.js`:
-`TEXT` (label & judul), `EVENT` (detail acara), `GUESTS` (12 undangan),
-`AGENDA`, `PREP`.
+`TEXT` (label & judul), `EVENT` (tanggal & situs), `GUESTS` (12 nama),
+`AGENDA`.
 
 Ganti isi di dalam tanda kutip `"..."` saja. Jangan hapus tanda kutip,
 koma, atau kurung.
@@ -32,7 +32,8 @@ koma, atau kurung.
 `index.html?u=<slug>` — kean, jason, barez, udin, razel, muti, muna, jpg,
 lunci, olel, shey, ken. Default: kean.
 
-Tambah/ganti orang: array `GUESTS` di `data.js`.
+Semua undangan formatnya sama, cuma nama yang beda. Tambah/ganti orang:
+array `GUESTS` di `data.js`.
 
 ## Voting
 
