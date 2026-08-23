@@ -10,8 +10,7 @@
    ========================================================= */
 
 const TEXT = {
-  brand: "BEM FTUI",
-  brandYear: "2026",
+  brand: "www.bemftui2026.com",
 
   mark: "</>",
   gate: "</>",

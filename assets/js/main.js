@@ -36,11 +36,11 @@ function applyText() {
 
 function codeLines(guest) {
   return `<p class="hero__code">
-    <span class="l" data-rise style="--d:0.10s">Hi,</span>
-    <span class="l l--ind1" data-rise style="--d:0.22s"><span class="tg">&gt;</span><span class="name">${esc(guest.name)}</span></span>
-    <span class="l l--ind2 cm" data-rise style="--d:0.34s">//You are Invited</span>
-    <span class="l l--ind1 tg" data-rise style="--d:0.46s">&lt;/&gt;</span>
-    <span class="l" data-rise style="--d:0.58s">}</span>
+    <span class="l">Hi,</span>
+    <span class="l l--ind1"><span class="tg">&gt;</span><span class="name">${esc(guest.name)}</span></span>
+    <span class="l l--ind2 cm">//You are Invited</span>
+    <span class="l l--ind1 tg">&lt;/&gt;</span>
+    <span class="l">}</span>
   </p>`;
 }
 
@@ -81,7 +81,57 @@ function watchRise(scope) {
   items.forEach((el) => io.observe(el));
 }
 
-/* ---------- siapa yang diundang ---------- */
+/* ---------- glitch undangan ---------- */
+
+const NOISE = "!<>-_\\/[]{}=+*^?#%$&@01";
+
+const noiseLike = (text) =>
+  [...text]
+    .map((ch) => (ch === " " ? " " : NOISE[Math.floor(Math.random() * NOISE.length)]))
+    .join("");
+
+/* Tiap baris ngaco dulu sebentar — merah, huruf acak — baru
+   ngebenerin diri jadi teks yang bener. */
+function glitchLine(line, delay) {
+  const finalHTML = line.innerHTML;
+  const text = line.textContent;
+
+  line.textContent = noiseLike(text);
+  line.classList.add("l--err");
+  line.style.visibility = "hidden";
+
+  const scrambleFor = 420;
+  const frame = 55;
+
+  setTimeout(() => {
+    line.style.visibility = "";
+    let elapsed = 0;
+
+    const tick = setInterval(() => {
+      elapsed += frame;
+      if (elapsed >= scrambleFor) {
+        clearInterval(tick);
+        line.classList.remove("l--err");
+        line.classList.add("l--ok");
+        line.innerHTML = finalHTML;
+        setTimeout(() => line.classList.remove("l--ok"), 420);
+        return;
+      }
+      line.textContent = noiseLike(text);
+    }, frame);
+  }, delay);
+}
+
+function playGlitch(card) {
+  const lines = [...card.querySelectorAll(".hero__code .l")];
+  if (!lines.length) return;
+
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  lines.forEach((line, i) => glitchLine(line, 120 + i * 150));
+}
+
+/* ---------- siapa yang diundang ---------- *//* ---------- siapa yang diundang ---------- */
 
 function currentGuest() {
   const params = new URLSearchParams(location.search);
@@ -106,12 +156,22 @@ function renderHero(guest) {
     </div>
     <div class="hero__body">
       ${codeLines(guest)}
-      <div class="hero__foot" data-rise style="--d:0.74s">
+      <div class="hero__foot" data-rise style="--d:0.10s">
         <span>// ${esc(EVENT.dateLabel)}</span>
         <a href="https://${esc(EVENT.site)}">${esc(EVENT.site)}</a>
       </div>
-    </div>`;
+    </div>
+    <button type="button" class="runbar" id="gate" data-rise style="--d:0.35s"
+            aria-label="Lanjut ke agenda">
+      <span class="runbar__mark">${esc(t("gate"))}</span>
+      <svg class="runbar__chev" viewBox="0 0 24 14" width="20" height="12" aria-hidden="true">
+        <path d="M2 2l10 10L22 2" fill="none" stroke="currentColor"
+              stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="runbar__sweep" aria-hidden="true"></span>
+    </button>`;
 
+  playGlitch(host);
   playRise(host);
   document.title = `${guest.name} — ${EVENT.title} · ${EVENT.org}`;
 }

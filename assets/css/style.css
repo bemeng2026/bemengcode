@@ -20,12 +20,14 @@
   --pink: #db2777;
   --cyan: #0891b2;
 
-  --heat-0: #eceef2;
-  --heat-1: #cfe0fb;
-  --heat-2: #9dc0f6;
-  --heat-3: #5b93ef;
-  --heat-4: #2563eb;
-  --heat-5: #1541a8;
+  --heat-0: #eef1ee;
+  --heat-1: #d6f2e0;
+  --heat-2: #a8e3c1;
+  --heat-3: #6fcd97;
+  --heat-4: #2fb06d;
+  --heat-5: #147a46;
+
+  --green-deep: #0b5f34;
 
   --font: "Helvetica Neue", Helvetica, Arial, "Segoe UI", Roboto, sans-serif;
   --radius: 10px;
@@ -109,10 +111,13 @@ a { color: var(--blue); }
 
 .topbar__brand {
   font-weight: 700;
-  letter-spacing: -0.02em;
+  font-size: 13.5px;
+  letter-spacing: -0.01em;
   white-space: nowrap;
+  color: var(--blue);
+  text-decoration: none;
 }
-.topbar__brand span { color: var(--blue); }
+.topbar__brand:hover { text-decoration: underline; text-underline-offset: 3px; }
 
 .topbar__nav {
   display: flex;
@@ -191,8 +196,35 @@ a { color: var(--blue); }
   .hero__code .l--ind2 { padding-left: 2.4em; }
 }
 .hero__code .name { color: var(--blue); }
+
 .hero__code .cm { color: var(--green); }
 .hero__code .tg { color: var(--blue); }
+
+/* Keadaan "error" sewaktu baris masih ngaco. Ditaruh sesudah aturan
+   warna .cm/.tg dan dikasih .l.l--err supaya baris hijau dan birunya
+   ikut jadi merah. */
+.hero__code .l.l--err {
+  color: #dc2626;
+  text-shadow: 1.5px 0 0 rgba(37, 99, 235, 0.5), -1.5px 0 0 rgba(220, 38, 38, 0.4);
+  animation: jitter 0.12s steps(2, end) infinite;
+}
+
+/* Kedipan singkat pas barisnya baru bener. */
+.hero__code .l.l--ok { animation: settle 0.42s ease-out; }
+
+@keyframes jitter {
+  0% { transform: translateX(0) skewX(0deg); }
+  50% { transform: translateX(-1.5px) skewX(-0.7deg); }
+  100% { transform: translateX(1.5px) skewX(0.5deg); }
+}
+
+@keyframes settle {
+  0% { opacity: 0.45; filter: blur(1.2px); }
+  40% { opacity: 1; filter: none; }
+  55% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
 
 .hero__foot {
   display: flex;
@@ -234,48 +266,69 @@ a { color: var(--blue); }
 /* ---------- layar undangan ---------- */
 
 .screen {
-  min-height: 100dvh;
+  /* Dikurangi tinggi topbar, kalau nggak kartunya kedorong ke bawah
+     dan ruang atas-bawahnya jadi timpang. */
+  min-height: calc(100dvh - 56px);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 88px 0 40px;
+  padding: 40px 0;
 }
 
-.gate {
+/* Tombol lanjut nempel di kaki kartu, sejajar dengan bar judul
+   di atasnya — jadi kebaca sebagai satu kesatuan, bukan tombol
+   nyasar di tengah kekosongan. */
+.runbar {
   position: relative;
-  display: grid;
-  place-items: center;
-  width: 76px;
-  height: 76px;
-  margin: 40px auto 0;
-  padding: 0;
-  border: 1.5px solid var(--line-strong);
-  border-radius: 50%;
-  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 18px 14px;
+  border: 0;
+  border-top: 1px solid var(--line);
+  background: color-mix(in srgb, var(--blue) 7%, var(--bg));
   color: var(--blue);
   font-family: var(--font);
-  font-size: 19px;
+  font-size: 17px;
   font-weight: 700;
+  letter-spacing: -0.02em;
   cursor: pointer;
+  overflow: hidden;
 }
-.gate:hover { border-color: var(--blue); }
-.gate:active { transform: scale(0.96); }
-.gate:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 
-.gate__mark { position: relative; z-index: 1; }
+.runbar:hover { background: color-mix(in srgb, var(--blue) 13%, var(--bg)); }
+.runbar:active { background: color-mix(in srgb, var(--blue) 18%, var(--bg)); }
+.runbar:focus-visible { outline: 2px solid var(--blue); outline-offset: -3px; }
 
-.gate__ring {
+.runbar__mark { position: relative; z-index: 1; }
+
+.runbar__chev {
+  position: relative;
+  z-index: 1;
+  display: block;
+  animation: nudge 1.9s ease-in-out infinite;
+}
+
+/* Sapuan terang yang lewat sesekali, biar matanya ketarik ke sini. */
+.runbar__sweep {
   position: absolute;
-  inset: -1.5px;
-  border: 1.5px solid var(--blue);
-  border-radius: 50%;
+  inset: 0;
   pointer-events: none;
-  animation: ring 2s ease-out infinite;
+  background: linear-gradient(
+    100deg,
+    transparent 35%,
+    color-mix(in srgb, var(--blue) 22%, transparent) 50%,
+    transparent 65%
+  );
+  transform: translateX(-100%);
+  animation: sweep 3.4s ease-in-out 1.2s infinite;
 }
 
-@keyframes ring {
-  0% { opacity: 0.55; transform: scale(1); }
-  70%, 100% { opacity: 0; transform: scale(1.45); }
+@keyframes sweep {
+  0% { transform: translateX(-100%); }
+  45%, 100% { transform: translateX(100%); }
 }
 
 /* ---------- loading ---------- */
@@ -469,11 +522,18 @@ body[data-stage="loading"] .rest { display: none; }
 
 .day--h1 { background: var(--heat-1); }
 .day--h2 { background: var(--heat-2); }
-.day--h3 { background: var(--heat-3); color: #fff; }
+.day--h3 { background: var(--heat-3); }
 .day--h4 { background: var(--heat-4); color: #fff; }
 .day--h5 { background: var(--heat-5); color: #fff; }
 
-.day--mine { border-color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+/* Tanggal yang lagi dipilih: hijau penuh, langsung pas diklik. */
+.day--mine {
+  background: var(--green);
+  border-color: var(--green-deep);
+  color: #fff;
+  box-shadow: inset 0 0 0 2px var(--green-deep);
+}
+.day--mine .day__c { opacity: 0.95; }
 
 .day--weekend .day__n { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 
@@ -502,9 +562,10 @@ body[data-stage="loading"] .rest { display: none; }
   color: var(--ink-faint);
 }
 
+/* Nama yang sudah ngevote jadi hijau. */
 .rost--in {
-  background: var(--blue);
-  border-color: var(--blue);
+  background: var(--green);
+  border-color: var(--green);
   color: #fff;
   font-weight: 600;
 }
@@ -521,7 +582,7 @@ body[data-stage="loading"] .rest { display: none; }
 .rank__pos { color: var(--ink-faint); }
 .rank__date { font-weight: 700; white-space: nowrap; }
 .rank__bar { height: 8px; border-radius: 999px; background: var(--bg-sunken); overflow: hidden; }
-.rank__fill { display: block; height: 100%; background: var(--blue); border-radius: 999px; }
+.rank__fill { display: block; height: 100%; background: var(--green); border-radius: 999px; }
 .rank__n { text-align: right; font-weight: 700; }
 
 .empty { color: var(--ink-faint); font-size: 13px; margin: 16px 0 0; }
