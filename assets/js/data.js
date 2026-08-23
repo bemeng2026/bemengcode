@@ -13,23 +13,9 @@ const TEXT = {
   brand: "BEM FTUI",
   brandYear: "2026",
 
-  nav: {
-    undangan: "undangan",
-    agenda: "agenda",
-    variant: "variant",
-    voting: "voting",
-  },
-
-  section: {
-    undanganNo: "01",
-    undangan: "undangan",
-    agendaNo: "02",
-    agenda: "agenda",
-    variantNo: "03",
-    variant: "12 variant",
-    votingNo: "04",
-    voting: "voting tanggal",
-  },
+  gate: "</>",
+  loading: "</>",
+  votingLabel: "voting tanggal",
 
   btn: {
     masuk: "masuk",

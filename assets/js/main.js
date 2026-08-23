@@ -1,5 +1,5 @@
 /* =========================================================
-   Render isi halaman: undangan, agenda, galeri.
+   Render isi halaman: undangan, agenda, voting.
    ========================================================= */
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -34,9 +34,8 @@ function applyText() {
 
 /* ---------- baris kode undangan ---------- */
 
-function codeLines(guest, { big }) {
-  const cls = big ? "hero__code" : "inv__code";
-  return `<p class="${cls}">
+function codeLines(guest) {
+  return `<p class="hero__code">
     <span class="l">Hi,</span>
     <span class="l l--ind1"><span class="tg">&gt;</span><span class="name">${esc(guest.name)}</span></span>
     <span class="l l--ind2 cm">//You are Invited</span>
@@ -69,7 +68,7 @@ function renderHero(guest) {
       <span class="card__file">invitation/${esc(guest.slug)}.html</span>
     </div>
     <div class="hero__body">
-      ${codeLines(guest, { big: true })}
+      ${codeLines(guest)}
       <div class="hero__foot">
         <span>// ${esc(EVENT.dateLabel)}</span>
         <a href="https://${esc(EVENT.site)}">${esc(EVENT.site)}</a>
@@ -87,28 +86,50 @@ function renderAgenda() {
 
   host.innerHTML = AGENDA.map(
     (a) => `
-    <article class="ag">
-      <div class="ag__no">${esc(a.no)}</div>
-      <h3 class="ag__title">${esc(a.title)}</h3>
-    </article>`
+    <li>
+      <span class="tasks__no">${esc(a.no)}</span>
+      <span class="tasks__t">${esc(a.title)}</span>
+    </li>`
   ).join("");
 }
 
-/* ---------- galeri 12 undangan ---------- */
+/* ---------- undangan -> loading -> agenda ---------- */
 
-function renderGallery(active) {
-  const host = $("#gallery");
-  if (!host) return;
+function initGate() {
+  const screen = $("#undanganku");
+  const gate = $("#gate");
+  if (!screen || !gate) return;
 
-  host.innerHTML = GUESTS.map(
-    (g) => `
-    <a class="inv"
-       href="?u=${encodeURIComponent(g.slug)}"
-       aria-current="${g.slug === active.slug}">
-      ${codeLines(g, { big: false })}
-      <span class="inv__site">${esc(EVENT.site)}</span>
-    </a>`
-  ).join("");
+  const instant = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let done = false;
+
+  const open = () => {
+    if (done) return;
+    done = true;
+    screen.removeEventListener("wheel", onScrollDown);
+    screen.removeEventListener("touchmove", onScrollDown);
+
+    const reveal = () => {
+      document.body.dataset.stage = "open";
+      $("#agenda").scrollIntoView({ behavior: instant ? "auto" : "smooth" });
+    };
+
+    if (instant) {
+      reveal();
+      return;
+    }
+    document.body.dataset.stage = "loading";
+    setTimeout(reveal, 1300);
+  };
+
+  function onScrollDown(e) {
+    const down = e.type === "touchmove" || e.deltaY > 0;
+    if (down) open();
+  }
+
+  gate.addEventListener("click", open);
+  screen.addEventListener("wheel", onScrollDown, { passive: true });
+  screen.addEventListener("touchmove", onScrollDown, { passive: true });
 }
 
 /* ---------- tema terang / gelap ---------- */
@@ -159,8 +180,8 @@ function boot() {
   const guest = currentGuest();
   renderHero(guest);
   renderAgenda();
-  renderGallery(guest);
   initTheme();
+  initGate();
   initVoting();
 
   const foot = $("#foot-site");

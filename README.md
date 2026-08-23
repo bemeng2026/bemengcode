@@ -32,8 +32,11 @@ koma, atau kurung.
 `index.html?u=<slug>` — kean, jason, barez, udin, razel, muti, muna, jpg,
 lunci, olel, shey, ken. Default: kean.
 
-Semua undangan formatnya sama, cuma nama yang beda. Tambah/ganti orang:
-array `GUESTS` di `data.js`.
+Semua undangan formatnya sama, cuma nama yang beda — tiap orang dikirimi
+link-nya sendiri. Tambah/ganti orang: array `GUESTS` di `data.js`.
+
+Alur halaman: undangan satu layar penuh, tap `</>` (atau scroll) buat
+loading, lalu agenda dan voting.
 
 ## Voting
 

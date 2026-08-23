@@ -12,62 +12,42 @@
 <meta property="og:url" content="https://www.bemftui2026.com">
 
 <link rel="stylesheet" href="assets/css/style.css">
+<noscript><style>body[data-stage="invite"] .rest { display: block; }</style></noscript>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80' font-family='Helvetica'>&lt;/&gt;</text></svg>">
 </head>
 
-<body>
+<body data-stage="invite">
 
 <header class="topbar">
   <div class="topbar__in">
     <div class="topbar__brand"><span data-text="brand">BEM FTUI</span> <span data-text="brandYear">2026</span></div>
-    <nav class="topbar__nav" aria-label="Navigasi">
-      <a href="#undanganku" data-text="nav.undangan">undangan</a>
-      <a href="#agenda" data-text="nav.agenda">agenda</a>
-      <a href="#undangan" data-text="nav.variant">variant</a>
-      <a href="#voting" data-text="nav.voting">voting</a>
-    </nav>
     <button type="button" class="themebtn" id="theme">dark</button>
   </div>
 </header>
 
 <main>
 
-  <section class="section hero" id="undanganku">
+  <section class="screen" id="undanganku">
     <div class="wrap">
-      <div class="section__head">
-        <div class="section__no" data-text="section.undanganNo">01</div>
-        <h1 class="section__title" data-text="section.undangan">undangan</h1>
-      </div>
       <article class="card" id="hero-card"></article>
+      <button type="button" class="gate" id="gate" data-text="gate">&lt;/&gt;</button>
     </div>
   </section>
 
-  <section class="section section--alt" id="agenda">
+  <div class="load" id="load" aria-hidden="true">
+    <span class="load__mark" data-text="loading">&lt;/&gt;</span>
+    <span class="load__bar"><span class="load__fill"></span></span>
+  </div>
+
+  <section class="section rest" id="agenda">
     <div class="wrap">
-      <div class="section__head">
-        <div class="section__no" data-text="section.agendaNo">02</div>
-        <h2 class="section__title" data-text="section.agenda">agenda</h2>
-      </div>
-      <div class="agenda" id="agenda-list"></div>
+      <ol class="tasks" id="agenda-list"></ol>
     </div>
   </section>
 
-  <section class="section section--alt" id="undangan">
+  <section class="section section--alt rest" id="voting">
     <div class="wrap">
-      <div class="section__head">
-        <div class="section__no" data-text="section.variantNo">04</div>
-        <h2 class="section__title" data-text="section.variant">12 variant</h2>
-      </div>
-      <div class="gal" id="gallery"></div>
-    </div>
-  </section>
-
-  <section class="section" id="voting">
-    <div class="wrap">
-      <div class="section__head">
-        <div class="section__no" data-text="section.votingNo">05</div>
-        <h2 class="section__title" data-text="section.voting">voting tanggal</h2>
-      </div>
+      <h2 class="label" data-text="votingLabel">voting tanggal</h2>
 
       <div class="vote">
 
@@ -76,7 +56,8 @@
             <label class="field">
               <span class="field__label" data-text="vote.username">USERNAME</span>
               <input class="input" id="vote-input" type="text" autocomplete="off"
-                     placeholder="kean" data-placeholder="vote.placeholder" maxlength="20" spellcheck="false">
+                     placeholder="kean" data-placeholder="vote.placeholder"
+                     maxlength="20" spellcheck="false">
             </label>
             <button class="btn" type="submit" data-text="btn.masuk">masuk</button>
             <div class="chips" id="vote-chips"></div>
@@ -138,7 +119,7 @@
 
 </main>
 
-<footer class="foot">
+<footer class="foot rest">
   <div class="wrap">
     <a class="foot__site" id="foot-site" href="https://www.bemftui2026.com">www.bemftui2026.com</a>
   </div>
