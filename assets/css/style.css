@@ -100,6 +100,13 @@ a { color: var(--blue); }
   padding: 0 24px;
 }
 
+.topbar__mark {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.03em;
+  color: var(--blue);
+}
+
 .topbar__brand {
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -153,7 +160,7 @@ a { color: var(--blue); }
   padding: 10px 14px;
   border-bottom: 1px solid var(--line);
   background: var(--bg-alt);
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--ink-faint);
 }
 
@@ -161,20 +168,28 @@ a { color: var(--blue); }
 .dot--r { background: #ff5f57; }
 .dot--y { background: #febc2e; }
 .dot--g { background: #28c840; }
-.card__file { margin-left: 8px; }
+.card__file { margin-left: 8px; letter-spacing: 0.01em; }
 
 .hero__body { padding: clamp(28px, 6vw, 56px); }
 
 .hero__code {
-  font-size: clamp(30px, 7vw, 62px);
-  line-height: 1.25;
-  letter-spacing: -0.03em;
+  /* Ukurannya dipatok supaya "//You are Invited" muat satu baris
+     bahkan di layar 360px. */
+  font-size: clamp(23px, 5.9vw, 58px);
+  line-height: 1.28;
+  letter-spacing: -0.035em;
   font-weight: 700;
   margin: 0;
+  white-space: nowrap;
 }
 .hero__code .l { display: block; }
-.hero__code .l--ind1 { padding-left: 1.2em; }
-.hero__code .l--ind2 { padding-left: 2.4em; }
+.hero__code .l--ind1 { padding-left: 0.9em; }
+.hero__code .l--ind2 { padding-left: 1.8em; }
+
+@media (min-width: 620px) {
+  .hero__code .l--ind1 { padding-left: 1.2em; }
+  .hero__code .l--ind2 { padding-left: 2.4em; }
+}
 .hero__code .name { color: var(--blue); }
 .hero__code .cm { color: var(--green); }
 .hero__code .tg { color: var(--blue); }
@@ -182,14 +197,17 @@ a { color: var(--blue); }
 .hero__foot {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 24px;
-  margin-top: 44px;
-  padding-top: 24px;
+  align-items: baseline;
+  gap: 6px 22px;
+  margin-top: clamp(32px, 6vw, 52px);
+  padding-top: 22px;
   border-top: 1px dashed var(--line-strong);
-  font-size: 13px;
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
   color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
 }
-.hero__foot a { color: var(--blue); }
+.hero__foot a { color: var(--blue); text-underline-offset: 3px; }
 
 .btn {
   display: inline-flex;
@@ -400,7 +418,7 @@ body[data-stage="loading"] .rest { display: none; }
 .cal__month { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
 .cal__hint { font-size: 12px; color: var(--ink-faint); margin-left: auto; }
 
-.cal__grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.cal__grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
 
 .cal__dow {
   text-align: center;
@@ -413,28 +431,41 @@ body[data-stage="loading"] .rest { display: none; }
 .day {
   position: relative;
   aspect-ratio: 1;
+  min-height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 10px;
   background: var(--heat-0);
   color: var(--ink);
   font-family: var(--font);
-  font-size: 13px;
-  font-weight: 600;
+  font-variant-numeric: tabular-nums;
   cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  padding: 2px;
-  transition: transform 0.08s ease;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
 }
-.day:hover:not(:disabled) { transform: translateY(-2px); border-color: var(--ink); }
-.day:disabled { cursor: default; opacity: 0.35; }
+.day:hover { border-color: var(--ink); }
+.day:active { transform: scale(0.95); }
+.day:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 .day--empty { border: 0; background: transparent; cursor: default; }
 
-.day__n { line-height: 1; }
-.day__c { font-size: 10px; font-weight: 700; line-height: 1; opacity: 0.85; }
+.day__n {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+/* Jumlah suara nempel di pojok, biar angka tanggalnya tetap dominan. */
+.day__c {
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  font-size: 9.5px;
+  font-weight: 700;
+  line-height: 1;
+  opacity: 0.75;
+}
 
 .day--h1 { background: var(--heat-1); }
 .day--h2 { background: var(--heat-2); }
@@ -442,9 +473,9 @@ body[data-stage="loading"] .rest { display: none; }
 .day--h4 { background: var(--heat-4); color: #fff; }
 .day--h5 { background: var(--heat-5); color: #fff; }
 
-.day--mine { border-color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); }
+.day--mine { border-color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
 
-.day--weekend .day__n { text-decoration: underline; text-underline-offset: 3px; }
+.day--weekend .day__n { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 
 .legend {
   display: flex;
@@ -514,13 +545,28 @@ body[data-stage="loading"] .rest { display: none; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 56px;
+  gap: clamp(28px, 7vw, 44px);
   padding: 32px;
   background: var(--bg);
 }
 
 body[data-stage="done"] .thanks { display: flex; }
 body[data-stage="done"] { overflow: hidden; }
+
+.thanks__see {
+  margin: 0;
+  font-size: clamp(30px, 8vw, 46px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.thanks__sign {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--blue);
+}
 
 .thanks__logos {
   display: flex;

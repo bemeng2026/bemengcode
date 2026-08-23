@@ -13,8 +13,10 @@ const TEXT = {
   brand: "BEM FTUI",
   brandYear: "2026",
 
+  mark: "</>",
   gate: "</>",
   loading: "</>",
+  seeYou: "see you",
   votingLabel: "voting tanggal",
 
   btn: {
@@ -22,8 +24,8 @@ const TEXT = {
     resubmit: "update",
     back: "back",
     edit: "edit tanggal",
-    refresh: "refresh",
     hapus: "hapus",
+    hapusYakin: "yakin?",
   },
 
   vote: {

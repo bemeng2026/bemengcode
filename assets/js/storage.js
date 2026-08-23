@@ -93,8 +93,39 @@ function RemoteStore(url, headers) {
   };
 }
 
+/* JSONBin: baca dan tulis beda alamat, jadi dibungkus sendiri. */
+function JsonbinStore(id, key) {
+  const base = `https://api.jsonbin.io/v3/b/${id}`;
+  const auth = { "X-Master-Key": key, "X-Bin-Versioning": "false" };
+
+  return {
+    mode: "remote",
+
+    async read() {
+      const res = await fetch(`${base}/latest`, {
+        headers: { ...auth, "X-Bin-Meta": "false" },
+        cache: "no-store",
+      });
+      if (!res.ok) throw new Error("GET " + res.status);
+      const body = await res.json();
+      return normalizeVotes(body && body.record ? body.record : body);
+    },
+
+    async write(data) {
+      const res = await fetch(base, {
+        method: "PUT",
+        headers: { ...auth, "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("PUT " + res.status);
+      return data;
+    },
+  };
+}
+
 function makeStore() {
   const cfg = window.BEMFTUI_CONFIG || {};
+  if (cfg.jsonbinId && cfg.jsonbinKey) return JsonbinStore(cfg.jsonbinId, cfg.jsonbinKey);
   if (cfg.apiUrl) return RemoteStore(cfg.apiUrl, cfg.apiHeaders || {});
   return LocalStore;
 }

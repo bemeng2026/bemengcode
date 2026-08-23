@@ -52,16 +52,18 @@ Yang masuk heatmap hanya yang sudah submit. Deretan chip di panel kiri
 nunjukin siapa dari 12 orang yang sudah masuk.
 
 Default `localStorage` — suara per browser, nggak kelihatan antar orang.
-Buat papan bersama, isi `apiUrl` di `config.js`:
+Buat papan bersama, cara tercepat lewat JSONBin: bikin bin berisi `{}`,
+lalu isi `config.js`:
 
 ```js
 window.BEMFTUI_CONFIG = {
-  apiUrl: "https://endpoint/vote",
-  apiHeaders: {},
+  jsonbinId: "68abc1234567890abcdef123",
+  jsonbinKey: "$2a$10$...",
 };
 ```
 
-Endpoint melayani `GET` dan `PUT` dengan bentuk:
+Endpoint lain juga bisa lewat `apiUrl`, asal melayani `GET` dan `PUT`
+dengan bentuk:
 
 ```json
 { "kean": { "dates": ["2026-09-09"], "at": 1692800000000 } }
@@ -71,4 +73,5 @@ Halaman narik data tiap `VOTE.pollSeconds` detik (default 5) dan pas tab
 dibuka lagi, jadi submit orang lain muncul tanpa reload. Sebelum nulis
 selalu baca ulang, jadi submit barengan nggak saling nimpa.
 
-`apiHeaders` kekirim dari browser — jangan taruh kunci rahasia.
+Kunci di `config.js` kebaca siapa pun yang buka halaman, jadi pakai
+akun JSONBin khusus buat ini.

@@ -317,7 +317,6 @@ function initVoting(guest) {
   const back = document.querySelector("#thanks-back");
   const edit = document.querySelector("#thanks-edit");
   const reset = document.querySelector("#tool-reset");
-  const refresh = document.querySelector("#tool-refresh");
 
   if (submit) {
     submit.addEventListener("click", async () => {
@@ -343,12 +342,26 @@ function initVoting(guest) {
   }
 
   if (reset) {
+    let armed = false;
+    let timer = null;
+
+    const disarm = () => {
+      armed = false;
+      clearTimeout(timer);
+      reset.textContent = t("btn.hapus");
+    };
+
     reset.addEventListener("click", () => {
-      if (confirm(`hapus tag ${me}?`)) clearVote();
+      if (!armed) {
+        armed = true;
+        reset.textContent = t("btn.hapusYakin");
+        timer = setTimeout(disarm, 4000);
+        return;
+      }
+      disarm();
+      clearVote();
     });
   }
-
-  if (refresh) refresh.addEventListener("click", pull);
 
   draft = Draft.get(me) || [];
   renderCalendar();

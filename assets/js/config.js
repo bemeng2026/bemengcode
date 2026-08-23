@@ -1,25 +1,30 @@
 /* =========================================================
-   Endpoint voting.
+   Tempat nyimpan voting.
 
-   Isi apiUrl supaya 12 orang lihat papan yang sama. Endpoint-nya
-   cukup melayani dua hal:
+   CARA PALING CEPAT — JSONBin (bisa dari HP):
+     1. Buka jsonbin.io, daftar gratis.
+     2. Create Bin, isi kotaknya dengan dua karakter:  {}
+     3. Simpan. Lihat URL-nya, contoh:
+        https://jsonbin.io/68abc1234567890abcdef123
+        Bagian belakangnya itu BIN ID.
+     4. Menu API Keys, copy MASTER KEY (yang diawali $2a$...).
+     5. Tempel dua-duanya di bawah ini.
 
-     GET  <apiUrl>  ->  { "kean": { "dates": ["2026-09-09"], "at": 0 } }
-     PUT  <apiUrl>  <-  body JSON dengan bentuk yang sama
+   Sesudah keisi, 12 orang lihat papan yang sama dan submit
+   orang lain muncul sendiri tiap beberapa detik.
 
-   Halaman selalu baca ulang sebelum nulis, jadi submit orang lain
-   nggak ketimpa. Perubahan orang lain ditarik tiap beberapa detik
-   (atur di VOTE.pollSeconds pada data.js).
+   Kalau masih null, voting jalan di browser masing-masing dan
+   nggak saling kelihatan.
 
-   Catatan: apiHeaders ikut terkirim dari browser dan bisa dilihat
-   siapa pun yang buka halaman. Jangan taruh kunci yang sifatnya
-   rahasia di situ.
-
-   Selama apiUrl masih null, voting jalan di localStorage — tiap
-   orang cuma lihat suaranya sendiri.
+   Ingat: key ini kebaca siapa pun yang buka halaman. Jangan
+   pakai akun JSONBin yang isinya data lain.
    ========================================================= */
 
 window.BEMFTUI_CONFIG = {
+  jsonbinId: null,
+  jsonbinKey: null,
+
+  /* Atau endpoint sendiri yang melayani GET dan PUT JSON. */
   apiUrl: null,
   apiHeaders: {},
 };

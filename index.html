@@ -20,6 +20,7 @@
 
 <header class="topbar">
   <div class="topbar__in">
+    <span class="topbar__mark" data-text="mark">&lt;/&gt;</span>
     <div class="topbar__brand"><span data-text="brand">BEM FTUI</span> <span data-text="brandYear">2026</span></div>
   </div>
 </header>
@@ -85,7 +86,6 @@
           </div>
 
           <div class="tools">
-            <button class="btn btn--ghost" type="button" id="tool-refresh" data-text="btn.refresh">refresh</button>
             <button class="btn btn--ghost" type="button" id="tool-reset" data-text="btn.hapus">hapus</button>
           </div>
 
@@ -119,7 +119,9 @@
 </main>
 
 <section class="thanks" id="thanks" aria-label="Terima kasih">
-  <div class="thanks__logos" data-rise>
+  <p class="thanks__see" data-rise data-text="seeYou">see you</p>
+
+  <div class="thanks__logos" data-rise style="--d:0.18s">
     <svg class="mark mark--claude" viewBox="0 0 100 100" width="46" height="46" aria-hidden="true">
       <g stroke="currentColor" stroke-width="8.5" stroke-linecap="round" transform="translate(50 50)">
         <line y1="-38" y2="38"/>
@@ -140,7 +142,9 @@
     </svg>
   </div>
 
-  <div class="thanks__actions" data-rise style="--d:0.35s">
+  <div class="thanks__sign" data-rise style="--d:0.36s" data-text="mark">&lt;/&gt;</div>
+
+  <div class="thanks__actions" data-rise style="--d:0.52s">
     <button class="btn btn--ghost" type="button" id="thanks-back" data-text="btn.back">back</button>
     <button class="btn" type="button" id="thanks-edit" data-text="btn.edit">edit tanggal</button>
   </div>
