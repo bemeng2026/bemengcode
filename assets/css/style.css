@@ -454,6 +454,30 @@ body[data-stage="loading"] .rest { display: none; }
 }
 .legend__sw { width: 16px; height: 16px; border-radius: 4px; border: 1px solid var(--line); }
 
+.roster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 16px;
+}
+
+.rost {
+  font-size: 11px;
+  line-height: 1;
+  padding: 5px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink-faint);
+}
+
+.rost--in {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+  font-weight: 600;
+}
+
 .rank { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 8px; }
 
 .rank li {

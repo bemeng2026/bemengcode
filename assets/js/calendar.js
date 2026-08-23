@@ -1,10 +1,9 @@
 /* =========================================================
-   Voting tanggal — kalender penuh + heatmap.
+   Voting tanggal — kalender, heatmap, sinkron antar orang.
 
-   Satu orang = satu username. Tiap orang bisa nge-tag
-   berapa pun tanggal kosong, dan satu tanggal boleh ditag
-   banyak orang. Makin banyak yang nge-tag, makin gelap
-   kotaknya di heatmap.
+   Pilih tanggal dulu (masih draft, tersimpan di browser sendiri),
+   baru submit. Yang sudah disubmit langsung kelihatan semua orang
+   dan ikut ngewarnain heatmap.
    ========================================================= */
 
 const DOW = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
@@ -15,21 +14,30 @@ const MONTHS = [
 
 const store = makeStore();
 
-/* seluruh voting: { username: ["2026-09-09", ...] } */
+/* Yang sudah disubmit semua orang. */
 let votes = {};
-
-/* siapa yang voting ditentukan link undangannya, bukan diketik */
+/* Pilihan orang ini, belum tentu sudah disubmit. */
+let draft = [];
+/* Siapa yang voting ditentukan link undangannya, bukan diketik. */
 let me = "";
+
+let poll = null;
+let lastSeen = "";
 
 const iso = (y, m, d) =>
   `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+
+const submitted = (user) => Boolean(votes[user] && votes[user].dates.length);
+
+const sameDates = (a, b) =>
+  a.length === b.length && a.every((d, i) => d === b[i]);
 
 /* ---------- hitung-hitungan ---------- */
 
 function tally() {
   const counts = new Map();
-  Object.entries(votes).forEach(([user, dates]) => {
-    (Array.isArray(dates) ? dates : []).forEach((date) => {
+  Object.entries(votes).forEach(([user, entry]) => {
+    entry.dates.forEach((date) => {
       if (!counts.has(date)) counts.set(date, []);
       counts.get(date).push(user);
     });
@@ -43,7 +51,7 @@ function heatLevel(count, max) {
   return Math.max(1, Math.min(5, Math.ceil((count / max) * 5)));
 }
 
-/* ---------- render kalender ---------- */
+/* ---------- kalender ---------- */
 
 function renderCalendar() {
   const host = document.querySelector("#cal-grid");
@@ -51,7 +59,7 @@ function renderCalendar() {
 
   const counts = tally();
   const max = counts.size ? Math.max(...[...counts.values()].map((u) => u.length)) : 0;
-  const mine = new Set(votes[me] || []);
+  const mine = new Set(draft);
 
   const { year, month } = VOTE;
   const first = new Date(year, month - 1, 1);
@@ -70,25 +78,21 @@ function renderCalendar() {
     const taggers = counts.get(date) || [];
     const level = heatLevel(taggers.length, max);
     const dow = new Date(year, month - 1, d).getDay();
-    const weekend = dow === 0 || dow === 6;
 
     const classes = [
       "day",
       level ? `day--h${level}` : "",
       mine.has(date) ? "day--mine" : "",
-      weekend ? "day--weekend" : "",
+      dow === 0 || dow === 6 ? "day--weekend" : "",
     ]
       .filter(Boolean)
       .join(" ");
 
-    const who = taggers.length ? taggers.join(", ") : "";
-    const label = `${d} ${MONTHS[month - 1]} ${year} — ${taggers.length} suara`;
-
     cells.push(`
       <button type="button" class="${classes}"
               data-date="${date}"
-              title="${esc(who)}"
-              aria-label="${esc(label)}"
+              title="${esc(taggers.join(", "))}"
+              aria-label="${esc(`${d} ${MONTHS[month - 1]} ${year} — ${taggers.length} suara`)}"
               aria-pressed="${mine.has(date)}">
         <span class="day__n">${d}</span>
         <span class="day__c">${taggers.length || ""}</span>
@@ -101,11 +105,12 @@ function renderCalendar() {
     btn.addEventListener("click", () => toggleDate(btn.dataset.date));
   });
 
-  const month_ = document.querySelector("#cal-month");
-  if (month_) month_.textContent = `${MONTHS[month - 1]} ${year}`;
+  const label = document.querySelector("#cal-month");
+  if (label) label.textContent = `${MONTHS[month - 1]} ${year}`;
 
   renderRanking(counts, max);
   renderStats(counts);
+  renderRoster();
   paintIdentity();
 }
 
@@ -116,13 +121,11 @@ function renderRanking(counts, max) {
   if (!host) return;
 
   const rows = [...counts.entries()]
-    .filter(([, users]) => users.length > 0)
     .sort((a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]))
     .slice(0, 8);
 
   if (!rows.length) {
-    host.innerHTML =
-      '<li class="empty">&mdash;</li>';
+    host.innerHTML = '<li class="empty">&mdash;</li>';
     return;
   }
 
@@ -142,7 +145,7 @@ function renderRanking(counts, max) {
 }
 
 function renderStats(counts) {
-  const people = Object.keys(votes).filter((u) => (votes[u] || []).length).length;
+  const people = Object.keys(votes).filter((u) => votes[u].dates.length).length;
   const tags = [...counts.values()].reduce((sum, u) => sum + u.length, 0);
   const best = [...counts.entries()].sort((a, b) => b[1].length - a[1].length)[0];
 
@@ -151,7 +154,7 @@ function renderStats(counts) {
     if (el) el.textContent = value;
   };
 
-  set("#stat-people", `${people}/${VOTE.maxParticipants}`);
+  set("#stat-people", `${people}/${GUESTS.length}`);
   set("#stat-tags", String(tags));
   set(
     "#stat-top",
@@ -159,40 +162,89 @@ function renderStats(counts) {
   );
 }
 
+/* Siapa dari 12 orang yang sudah submit. */
+function renderRoster() {
+  const host = document.querySelector("#roster");
+  if (!host) return;
+
+  host.innerHTML = GUESTS.map(
+    (g) => `
+    <span class="rost ${submitted(g.slug) ? "rost--in" : ""}"
+          title="${esc(submitted(g.slug) ? g.name + " sudah submit" : g.name + " belum submit")}">
+      ${esc(g.slug)}
+    </span>`
+  ).join("");
+}
+
 /* ---------- aksi ---------- */
 
-async function toggleDate(date) {
-  if (!me) return;
+function toggleDate(date) {
+  const cap = VOTE.maxPicksPerUser;
+  const at = draft.indexOf(date);
 
-  /* baca ulang dulu supaya tag orang lain nggak ketimpa */
-  try {
-    votes = await store.read();
-  } catch {
-    /* pakai salinan yang ada kalau gagal ambil */
-  }
-
-  const mine = new Set(votes[me] || []);
-  if (mine.has(date)) mine.delete(date);
+  if (at >= 0) draft.splice(at, 1);
   else {
-    const cap = VOTE.maxPicksPerUser;
-    if (cap > 0 && mine.size >= cap) {
+    if (cap > 0 && draft.length >= cap) {
       say(`maks ${cap} tanggal`);
       return;
     }
-    mine.add(date);
+    draft.push(date);
+    draft.sort();
   }
 
-  votes[me] = [...mine].sort();
-  if (!votes[me].length) delete votes[me];
-
+  Draft.set(me, draft);
+  say("");
   renderCalendar();
+}
+
+async function submitVote() {
+  if (!draft.length) return;
+
+  say("mengirim…");
+
+  /* Baca ulang dulu supaya submit orang lain nggak ketimpa. */
+  try {
+    votes = await store.read();
+  } catch {
+    say("gagal kirim");
+    return;
+  }
+
+  votes[me] = { dates: [...draft], at: Date.now() };
 
   try {
     await store.write(votes);
-    say("");
+  } catch {
+    say("gagal kirim");
+    return;
+  }
+
+  lastSeen = JSON.stringify(votes);
+  say("");
+  renderCalendar();
+  return true;
+}
+
+async function clearVote() {
+  try {
+    votes = await store.read();
+  } catch {
+    /* pakai salinan yang ada */
+  }
+
+  delete votes[me];
+  draft = [];
+  Draft.set(me, draft);
+
+  try {
+    await store.write(votes);
+    say("terhapus");
   } catch {
     say("gagal simpan");
   }
+
+  lastSeen = JSON.stringify(votes);
+  renderCalendar();
 }
 
 function say(message) {
@@ -200,93 +252,79 @@ function say(message) {
   if (el) el.textContent = message;
 }
 
-/* ---------- identitas ---------- */
+/* ---------- identitas & tombol submit ---------- */
 
 function paintIdentity() {
-  const picked = (votes[me] || []).length;
-
   const nameEl = document.querySelector("#vote-name");
   if (nameEl) nameEl.textContent = me;
 
   const countEl = document.querySelector("#vote-mine");
-  if (countEl) countEl.textContent = String(picked);
+  if (countEl) countEl.textContent = String(draft.length);
 
-  /* Nggak ada yang bisa disubmit kalau belum ada tanggal dipilih. */
-  const submit = document.querySelector("#submit");
-  if (submit) submit.disabled = picked === 0;
+  const btn = document.querySelector("#submit");
+  if (!btn) return;
+
+  const sent = votes[me] ? votes[me].dates : null;
+  const unchanged = sent !== null && sameDates(sent, draft);
+
+  btn.disabled = draft.length === 0 || unchanged;
+  btn.textContent = sent ? t("btn.resubmit") : t("btn.submit");
 }
 
-/* ---------- alat bantu ---------- */
+/* ---------- sinkron ---------- */
 
-function summaryText() {
-  const counts = tally();
-  const rows = [...counts.entries()].sort((a, b) => b[1].length - a[1].length);
-  const head = `${MONTHS[VOTE.month - 1]} ${VOTE.year}`;
-  if (!rows.length) return head;
-  const body = rows
-    .map(([date, users]) => `${date} ${users.length} ${users.join(",")}`)
-    .join("\n");
-  return `${head}\n${body}`;
+async function pull() {
+  let fresh;
+  try {
+    fresh = await store.read();
+  } catch {
+    say("gagal muat");
+    return;
+  }
+
+  const stamp = JSON.stringify(fresh);
+  if (stamp === lastSeen) return;
+
+  lastSeen = stamp;
+  votes = fresh;
+  renderCalendar();
 }
 
-function initTools() {
-  const copy = document.querySelector("#tool-copy");
-  const reset = document.querySelector("#tool-reset");
-  const refresh = document.querySelector("#tool-refresh");
+function startPolling() {
+  const every = VOTE.pollSeconds * 1000;
+  if (!every) return;
 
-  if (copy) {
-    copy.addEventListener("click", async () => {
-      const text = summaryText();
-      try {
-        await navigator.clipboard.writeText(text);
-        say("tersalin");
-      } catch {
-        say("clipboard diblokir");
-        console.log(text);
-      }
-    });
-  }
+  const tick = () => {
+    if (document.visibilityState === "visible") pull();
+  };
 
-  if (reset) {
-    reset.addEventListener("click", async () => {
-      if (!me) return;
-      if (!confirm(`hapus tag ${me}?`)) return;
-      try {
-        votes = await store.read();
-      } catch {
-        /* pakai salinan yang ada */
-      }
-      delete votes[me];
-      renderCalendar();
-      try {
-        await store.write(votes);
-        say("terhapus");
-      } catch {
-        say("gagal simpan");
-      }
-    });
-  }
+  clearInterval(poll);
+  poll = setInterval(tick, every);
 
-  if (refresh) {
-    refresh.addEventListener("click", async () => {
-      await loadVotes();
-      say("");
-    });
-  }
+  /* Balik ke tab ini = langsung tarik data terbaru. */
+  document.addEventListener("visibilitychange", tick);
 }
 
-/* ---------- submit & halaman terima kasih ---------- */
+/* ---------- start ---------- */
 
-function initSubmit() {
+function initVoting(guest) {
+  me = guest ? guest.slug : "";
+
+  const mode = document.querySelector("#vote-mode");
+  if (mode) mode.textContent = store.mode === "remote" ? t("vote.sync") : t("vote.lokal");
+
   const submit = document.querySelector("#submit");
   const back = document.querySelector("#thanks-back");
   const edit = document.querySelector("#thanks-edit");
+  const reset = document.querySelector("#tool-reset");
+  const refresh = document.querySelector("#tool-refresh");
 
   if (submit) {
-    submit.addEventListener("click", () => {
-      if (!(votes[me] || []).length) return;
-      document.body.dataset.stage = "done";
-      playRise(document.querySelector("#thanks"));
+    submit.addEventListener("click", async () => {
+      if (await submitVote()) {
+        document.body.dataset.stage = "done";
+        playRise(document.querySelector("#thanks"));
+      }
     });
   }
 
@@ -303,28 +341,36 @@ function initSubmit() {
       document.querySelector("#voting").scrollIntoView({ behavior: "smooth" });
     });
   }
+
+  if (reset) {
+    reset.addEventListener("click", () => {
+      if (confirm(`hapus tag ${me}?`)) clearVote();
+    });
+  }
+
+  if (refresh) refresh.addEventListener("click", pull);
+
+  draft = Draft.get(me) || [];
+  renderCalendar();
+
+  loadFirst();
+  startPolling();
 }
 
-async function loadVotes() {
+async function loadFirst() {
   try {
     votes = await store.read();
+    lastSeen = JSON.stringify(votes);
   } catch {
     votes = {};
     say("gagal muat");
   }
+
+  /* Kalau sudah pernah submit dan belum ada draft, pakai yang tersubmit. */
+  if (!draft.length && votes[me]) {
+    draft = [...votes[me].dates];
+    Draft.set(me, draft);
+  }
+
   renderCalendar();
-}
-
-/* ---------- start ---------- */
-
-function initVoting(guest) {
-  me = guest ? guest.slug : "";
-
-  const mode = document.querySelector("#vote-mode");
-  if (mode) mode.textContent = store.mode === "remote" ? t("vote.sync") : t("vote.lokal");
-
-  initTools();
-  initSubmit();
-  paintIdentity();
-  loadVotes();
 }

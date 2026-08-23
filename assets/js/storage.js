@@ -1,9 +1,15 @@
 /* =========================================================
-   Lapisan penyimpanan voting.
-   Bentuk data: { username: ["YYYY-MM-DD", ...], ... }
+   Penyimpanan voting.
+
+   Bentuk data bersama:
+     { "kean": { "dates": ["2026-09-09"], "at": 1692800000000 } }
+
+   Hanya yang sudah submit yang masuk ke sini, jadi isi objek ini
+   sama dengan isi heatmap.
    ========================================================= */
 
-const STORE_KEY = "bemftui2026.vote.v1";
+const STORE_KEY = "bemftui2026.vote.v2";
+const DRAFT_KEY = "bemftui2026.draft.v1";
 
 function safeParse(raw, fallback) {
   if (!raw) return fallback;
@@ -15,14 +21,34 @@ function safeParse(raw, fallback) {
   }
 }
 
-/* --- penyimpanan lokal (default) --- */
+/* Terima bentuk lama (array tanggal) maupun baru (objek). */
+function normalizeVotes(raw) {
+  const out = {};
+  if (!raw || typeof raw !== "object") return out;
+
+  Object.entries(raw).forEach(([user, value]) => {
+    if (Array.isArray(value)) {
+      out[user] = { dates: value.filter((d) => typeof d === "string"), at: 0 };
+      return;
+    }
+    if (value && Array.isArray(value.dates)) {
+      out[user] = {
+        dates: value.dates.filter((d) => typeof d === "string"),
+        at: Number(value.at) || 0,
+      };
+    }
+  });
+  return out;
+}
+
+/* --- penyimpanan lokal (buat nyoba tanpa server) --- */
 
 const LocalStore = {
   mode: "local",
 
   async read() {
     try {
-      return safeParse(localStorage.getItem(STORE_KEY), {});
+      return normalizeVotes(safeParse(localStorage.getItem(STORE_KEY), {}));
     } catch {
       return {};
     }
@@ -32,13 +58,13 @@ const LocalStore = {
     try {
       localStorage.setItem(STORE_KEY, JSON.stringify(data));
     } catch {
-      /* private mode / storage penuh — voting tetap jalan di memori */
+      /* private mode / penuh — voting tetap jalan di memori */
     }
     return data;
   },
 };
 
-/* --- penyimpanan bersama (opsional) --- */
+/* --- penyimpanan bersama --- */
 
 function RemoteStore(url, headers) {
   return {
@@ -50,8 +76,9 @@ function RemoteStore(url, headers) {
         cache: "no-store",
       });
       if (!res.ok) throw new Error("GET " + res.status);
-      const data = await res.json();
-      return data && typeof data === "object" ? data : {};
+      const body = await res.json();
+      /* Sebagian layanan membungkus isinya di dalam "record". */
+      return normalizeVotes(body && body.record ? body.record : body);
     },
 
     async write(data) {
@@ -72,3 +99,24 @@ function makeStore() {
   return LocalStore;
 }
 
+/* --- pilihan yang belum disubmit, disimpan di browser sendiri --- */
+
+const Draft = {
+  get(user) {
+    try {
+      const all = safeParse(localStorage.getItem(DRAFT_KEY), {});
+      return Array.isArray(all[user]) ? all[user] : null;
+    } catch {
+      return null;
+    }
+  },
+  set(user, dates) {
+    try {
+      const all = safeParse(localStorage.getItem(DRAFT_KEY), {});
+      all[user] = dates;
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(all));
+    } catch {
+      /* diabaikan */
+    }
+  },
+};

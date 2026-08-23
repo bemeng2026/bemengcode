@@ -1,18 +1,22 @@
 /* =========================================================
-   Konfigurasi voting kalender.
+   Endpoint voting.
 
-   Default: data voting disimpan di browser masing-masing
-   (localStorage). Cocok buat nyoba-nyoba, tapi hasil tiap
-   orang TIDAK kelihatan satu sama lain.
+   Isi apiUrl supaya 12 orang lihat papan yang sama. Endpoint-nya
+   cukup melayani dua hal:
 
-   Kalau mau voting beneran barengan 20 orang, isi apiUrl
-   dengan endpoint yang menyediakan:
-
-     GET  <apiUrl>  ->  { "kean": ["2026-09-09"], "jason": [...] }
+     GET  <apiUrl>  ->  { "kean": { "dates": ["2026-09-09"], "at": 0 } }
      PUT  <apiUrl>  <-  body JSON dengan bentuk yang sama
 
-   Endpoint apa pun bisa dipakai selama bentuknya segitu
-   (JSONBin, Supabase REST, Cloudflare Worker, dsb).
+   Halaman selalu baca ulang sebelum nulis, jadi submit orang lain
+   nggak ketimpa. Perubahan orang lain ditarik tiap beberapa detik
+   (atur di VOTE.pollSeconds pada data.js).
+
+   Catatan: apiHeaders ikut terkirim dari browser dan bisa dilihat
+   siapa pun yang buka halaman. Jangan taruh kunci yang sifatnya
+   rahasia di situ.
+
+   Selama apiUrl masih null, voting jalan di localStorage — tiap
+   orang cuma lihat suaranya sendiri.
    ========================================================= */
 
 window.BEMFTUI_CONFIG = {

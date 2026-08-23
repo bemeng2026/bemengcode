@@ -19,10 +19,10 @@ const TEXT = {
 
   btn: {
     submit: "submit",
+    resubmit: "update",
     back: "back",
     edit: "edit tanggal",
     refresh: "refresh",
-    salin: "salin",
     hapus: "hapus",
   },
 
@@ -70,6 +70,6 @@ const AGENDA = [
 const VOTE = {
   year: 2026,
   month: 9,
-  maxParticipants: 20,
   maxPicksPerUser: 0, /* 0 = bebas, isi angka kalau mau dibatasi */
+  pollSeconds: 5,     /* seberapa sering narik data orang lain */
 };

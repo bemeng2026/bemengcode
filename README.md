@@ -47,8 +47,12 @@ Siapa yang voting diambil dari `?u=` di link, jadi nggak ada isian
 username. Setelan di `VOTE` (`data.js`): `year`, `month`,
 `maxParticipants` (20), `maxPicksPerUser` (`0` = bebas).
 
+Pilih tanggal dulu (draft, tersimpan di browser sendiri), lalu submit.
+Yang masuk heatmap hanya yang sudah submit. Deretan chip di panel kiri
+nunjukin siapa dari 12 orang yang sudah masuk.
+
 Default `localStorage` — suara per browser, nggak kelihatan antar orang.
-Buat suara bersama, isi `apiUrl` di `config.js`:
+Buat papan bersama, isi `apiUrl` di `config.js`:
 
 ```js
 window.BEMFTUI_CONFIG = {
@@ -60,7 +64,11 @@ window.BEMFTUI_CONFIG = {
 Endpoint melayani `GET` dan `PUT` dengan bentuk:
 
 ```json
-{ "kean": ["2026-09-09"], "muna": ["2026-09-09"] }
+{ "kean": { "dates": ["2026-09-09"], "at": 1692800000000 } }
 ```
+
+Halaman narik data tiap `VOTE.pollSeconds` detik (default 5) dan pas tab
+dibuka lagi, jadi submit orang lain muncul tanpa reload. Sebelum nulis
+selalu baca ulang, jadi submit barengan nggak saling nimpa.
 
 `apiHeaders` kekirim dari browser — jangan taruh kunci rahasia.
