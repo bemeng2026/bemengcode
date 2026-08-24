@@ -1,37 +1,37 @@
 /* =========================================================
-   Voting tanggal — kalender, heatmap, sinkron antar orang.
+   Availability calendar — heatmap and live sync.
 
-   Pilih tanggal dulu (masih draft, tersimpan di browser sendiri),
-   baru submit. Yang sudah disubmit langsung kelihatan semua orang
-   dan ikut ngewarnain heatmap.
+   Pick your free dates first (a draft, kept in your own browser),
+   then submit. Anything submitted shows up for everyone and feeds
+   the heatmap.
    ========================================================= */
 
-const DOW = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
+const DOW = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const MONTHS = [
-  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-  "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
 ];
 
 const store = makeStore();
 
-/* Yang sudah disubmit semua orang. */
+/* Everything everyone has submitted. */
 let votes = {};
-/* Pilihan orang ini, belum tentu sudah disubmit. */
+/* This person's picks, not necessarily submitted yet. */
 let draft = [];
-/* Siapa yang voting ditentukan link undangannya, bukan diketik. */
+/* Who is answering comes from their invitation link, not a text field. */
 let me = "";
 
 let poll = null;
 let lastSeen = "";
 
-/* Susunan satu bulan: berapa sel kosong di depan, dan berapa harinya. */
+/* One month: how many blank cells lead the grid, and how many days. */
 function monthLayout() {
   const { year, month } = VOTE;
   return {
     year,
     month,
     total: new Date(year, month, 0).getDate(),
-    /* getDay(): 0 = Minggu. Digeser supaya minggu mulai Senin. */
+    /* getDay(): 0 = Sunday. Shifted so the week starts on Monday. */
     lead: (new Date(year, month - 1, 1).getDay() + 6) % 7,
   };
 }
@@ -44,7 +44,7 @@ const submitted = (user) => Boolean(votes[user] && votes[user].dates.length);
 const sameDates = (a, b) =>
   a.length === b.length && a.every((d, i) => d === b[i]);
 
-/* ---------- hitung-hitungan ---------- */
+/* ---------- counting ---------- */
 
 function tally() {
   const counts = new Map();
@@ -63,7 +63,7 @@ function heatLevel(count, max) {
   return Math.max(1, Math.min(5, Math.ceil((count / max) * 5)));
 }
 
-/* ---------- kalender ---------- */
+/* ---------- calendar ---------- */
 
 function renderCalendar() {
   const host = document.querySelector("#cal-grid");
@@ -100,7 +100,7 @@ function renderCalendar() {
       <button type="button" class="${classes}"
               data-date="${date}"
               title="${esc(taggers.join(", "))}"
-              aria-label="${esc(`${d} ${MONTHS[month - 1]} ${year} — ${taggers.length} suara`)}"
+              aria-label="${esc(`${d} ${MONTHS[month - 1]} ${year} — ${taggers.length} free`)}"
               aria-pressed="${mine.has(date)}">
         <span class="day__n">${d}</span>
       </button>`);
@@ -110,7 +110,7 @@ function renderCalendar() {
 
   host.querySelectorAll("[data-date]").forEach((btn) => {
     btn.addEventListener("click", () => {
-      if (dragged) return; /* sudah diurus waktu digeser */
+      if (dragged) return; /* already handled by the drag */
       toggleDate(btn.dataset.date);
     });
   });
@@ -124,7 +124,7 @@ function renderCalendar() {
   renderThanks(counts, max);
 }
 
-/* ---------- tiga tanggal terbanyak ---------- */
+/* ---------- the three best dates ---------- */
 
 const dayLabel = (date) =>
   `${Number(date.slice(8, 10))} ${MONTHS[VOTE.month - 1].slice(0, 3)}`;
@@ -135,8 +135,8 @@ function rankRows(counts) {
   );
 }
 
-/* Tiga tanggal terbanyak sebagai kotak, gede-kecil ikut peringkat.
-   Tanpa angka — warnanya sudah cukup ngasih tahu. */
+/* The three best dates as tiles, sized by rank. No figures — the
+   colour already says how busy each one is. */
 function podiumHTML(counts, max) {
   const rows = rankRows(counts).slice(0, 3);
   if (!rows.length) return '<span class="empty">&mdash;</span>';
@@ -158,9 +158,9 @@ function renderTop3(counts, max) {
   if (host) host.innerHTML = podiumHTML(counts, max);
 }
 
-/* Halaman terakhir: seluruh bulan sebagai heatmap, lalu tiga tanggal
-   teratas. Sengaja tanpa angka — cukup kelihatan mana yang paling
-   banyak kosongnya. */
+/* Closing screen: the whole month as a heatmap, then the three best
+   dates. Deliberately without figures — you can see which days most
+   people are free.  */
 function renderThanks(counts, max) {
   const host = document.querySelector("#thanks-mini");
   if (host) {
@@ -189,21 +189,28 @@ function renderThanks(counts, max) {
   if (podium) podium.innerHTML = podiumHTML(counts, max);
 }
 
-/* Siapa dari 12 orang yang sudah submit. */
+/* Who has answered so far. */
 function renderRoster() {
+  /* How many have answered, out of everyone invited. */
+  const done = document.querySelector("#vote-done");
+  if (done) {
+    const n = GUESTS.filter((g) => submitted(g.slug)).length;
+    done.textContent = `${n}/${GUESTS.length}`;
+  }
+
   const host = document.querySelector("#roster");
   if (!host) return;
 
   host.innerHTML = GUESTS.map(
     (g) => `
     <span class="rost ${submitted(g.slug) ? "rost--in" : ""}"
-          title="${esc(submitted(g.slug) ? g.name + " sudah submit" : g.name + " belum submit")}">
+          title="${esc(submitted(g.slug) ? g.name + " answered" : g.name + " has not answered")}">
       ${esc(g.slug)}
     </span>`
   ).join("");
 }
 
-/* ---------- nandain beberapa hari sekaligus ---------- */
+/* ---------- marking a run of days ---------- */
 
 let dragging = false;
 let dragMode = true; /* true = lagi nandain, false = lagi ngelepas */
@@ -214,7 +221,7 @@ function dayAt(x, y) {
   return el && el.closest ? el.closest("[data-date]") : null;
 }
 
-/* Nandain seminggu penuh mestinya satu gerakan, bukan tujuh ketukan. */
+/* Marking a free week should be one gesture, not seven taps. */
 function initDrag() {
   const grid = document.querySelector("#cal-grid");
   if (!grid) return;
@@ -226,12 +233,12 @@ function initDrag() {
     dragging = true;
     dragMode = !draft.includes(cell.dataset.date);
 
-    /* Sel tempat jari turun ikut ketandain, kalau nggak ketukan biasa
-       nggak ngapa-ngapain dan geser selalu ninggalin sel pertamanya. */
+    /* The cell under the finger is marked too; without this a plain tap
+       does nothing and a drag always skips the cell it started on. */
     setDate(cell.dataset.date, dragMode);
 
-    /* Klik yang nyusul sesudah ini diabaikan; ketukan sudah diurus di
-       sini. Jalur klik disisakan buat keyboard. */
+    /* Ignore the click that follows — the tap is handled here. The click
+       path is left for keyboard users. */
     dragged = true;
   });
 
@@ -257,7 +264,7 @@ function initDrag() {
   window.addEventListener("pointercancel", stop);
 }
 
-/* ---------- aksi ---------- */
+/* ---------- actions ---------- */
 
 function setDate(date, on) {
   const at = draft.indexOf(date);
@@ -268,7 +275,7 @@ function setDate(date, on) {
     if (at >= 0) return;
     const cap = VOTE.maxPicksPerUser;
     if (cap > 0 && draft.length >= cap) {
-      say(`maks ${cap} tanggal`);
+      say(`max ${cap} dates`);
       return;
     }
     draft.push(date);
@@ -287,9 +294,9 @@ function toggleDate(date) {
 async function submitVote() {
   if (!draft.length) return;
 
-  say("mengirim…");
+  say("sending…");
 
-  /* Baca ulang dulu supaya submit orang lain nggak ketimpa. */
+  /* Re-read first so nobody else's answer gets overwritten. */
   try {
     votes = await store.read();
   } catch (e) {
@@ -316,7 +323,7 @@ async function clearVote() {
   try {
     votes = await store.read();
   } catch {
-    /* pakai salinan yang ada */
+    /* keep the copy we already have */
   }
 
   delete votes[me];
@@ -325,21 +332,21 @@ async function clearVote() {
 
   try {
     await store.write(votes);
-    say("terhapus");
+    say("cleared");
   } catch {
-    say("gagal simpan");
+    say("could not save");
   }
 
   lastSeen = JSON.stringify(votes);
   renderCalendar();
 }
 
-/* Kalau fetch-nya sendiri yang ditolak (bukan status HTTP), berarti
-   halaman ini nggak diizinkan nyambung keluar — bukan salah server. */
+/* If the fetch itself failed (no HTTP status), this page is not allowed
+   to reach out at all — that is not the server's doing. */
 function reachMsg(err) {
   const m = String((err && err.message) || err);
-  if (/^(GET|PUT) \d+/.test(m)) return `server nolak (${m})`;
-  return "halaman ini nggak bisa nyambung ke server voting";
+  if (/^(GET|PUT) \d+/.test(m)) return `server refused (${m})`;
+  return "this page cannot reach the vote server";
 }
 
 function say(message) {
@@ -347,7 +354,7 @@ function say(message) {
   if (el) el.textContent = message;
 }
 
-/* ---------- identitas & tombol submit ---------- */
+/* ---------- identity and the submit button ---------- */
 
 function paintIdentity() {
   const nameEl = document.querySelector("#vote-name");
@@ -356,8 +363,8 @@ function paintIdentity() {
   const btn = document.querySelector("#submit");
   if (!btn) return;
 
-  /* Seed bikin 12 entri kosong duluan, jadi "pernah submit" diukur dari
-     ada-nya tanggal, bukan ada-nya entri. */
+  /* The seed creates every entry up front, so "has answered" is measured
+     by whether that entry holds dates, not by the entry existing. */
   const sent = votes[me] && votes[me].dates.length ? votes[me].dates : null;
   const unchanged = sent !== null && sameDates(sent, draft);
 
@@ -365,8 +372,8 @@ function paintIdentity() {
   btn.textContent = sent ? t("btn.resubmit") : t("btn.submit");
 }
 
-/* Dibalikin ke keadaan awal dulu, kalau nggak animasinya cuma jalan
-   sekali karena data-in-nya masih nempel dari kunjungan sebelumnya. */
+/* Reset to the start state first, otherwise the animation only ever runs
+   once — data-in is still set from the previous visit. */
 function showThanks() {
   const screen = document.querySelector("#thanks");
   if (!screen) return;
@@ -379,7 +386,7 @@ function showThanks() {
   playRise(screen);
 }
 
-/* ---------- sinkron ---------- */
+/* ---------- sync ---------- */
 
 async function pull() {
   let fresh;
@@ -405,9 +412,8 @@ function startPolling() {
   const section = document.querySelector("#voting");
   let onScreen = true;
 
-  /* Kuota JSONBin gratis nggak besar, jadi jangan narik data pas
-     kalendernya nggak kelihatan — tab di background atau orangnya
-     masih di bagian undangan. */
+  /* The free JSONBin quota is small, so do not pull while the calendar is
+     off screen — a background tab, or someone still on the invitation. */
   if (section && "IntersectionObserver" in window) {
     onScreen = false;
     new IntersectionObserver((entries) => {
@@ -432,7 +438,7 @@ function initVoting(guest) {
   me = guest ? guest.slug : "";
 
   const mode = document.querySelector("#vote-mode");
-  if (mode) mode.textContent = store.mode === "remote" ? t("vote.sync") : t("vote.lokal");
+  if (mode) mode.textContent = store.mode === "remote" ? t("vote.synced") : t("vote.local");
 
   const submit = document.querySelector("#submit");
   const back = document.querySelector("#thanks-back");
@@ -468,13 +474,13 @@ function initVoting(guest) {
     const disarm = () => {
       armed = false;
       clearTimeout(timer);
-      reset.textContent = t("btn.hapus");
+      reset.textContent = t("btn.clear");
     };
 
     reset.addEventListener("click", () => {
       if (!armed) {
         armed = true;
-        reset.textContent = t("btn.hapusYakin");
+        reset.textContent = t("btn.clearSure");
         timer = setTimeout(disarm, 4000);
         return;
       }
@@ -500,7 +506,7 @@ async function loadFirst() {
     say(reachMsg(e));
   }
 
-  /* Kalau sudah pernah submit dan belum ada draft, pakai yang tersubmit. */
+  /* Already answered but no local draft? Start from what was submitted. */
   if (!draft.length && votes[me]) {
     draft = [...votes[me].dates];
     Draft.set(me, draft);

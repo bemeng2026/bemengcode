@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -28,7 +28,7 @@
 
 <main>
 
-  <section class="screen" id="undanganku">
+  <section class="screen" id="invite">
     <div class="wrap">
       <article class="card" id="hero-card"></article>
     </div>
@@ -53,13 +53,14 @@
 
   <section class="section section--alt rest" id="voting">
     <div class="wrap">
-      <h2 class="label" data-rise data-text="votingLabel">kapan kamu bisa</h2>
+      <h2 class="label" data-rise data-text="votingLabel">when are you free</h2>
 
       <div class="vote">
 
         <div class="panel" data-rise style="--d:0.08s">
           <div class="who" id="vote-who">
             <span>&gt; <strong id="vote-name"></strong></span>
+            <span class="who__n" id="vote-done"></span>
           </div>
 
           <div class="roster" id="roster"></div>
@@ -67,7 +68,7 @@
           <div class="podium" id="top3"></div>
 
           <div class="tools">
-            <button class="btn btn--ghost" type="button" id="tool-reset" data-text="btn.hapus">hapus</button>
+            <button class="btn btn--ghost" type="button" id="tool-reset" data-text="btn.clear">clear</button>
           </div>
 
           <button class="btn submit" type="button" id="submit" data-text="btn.submit" disabled>submit</button>
@@ -99,7 +100,7 @@
 
 </main>
 
-<section class="thanks" id="thanks" aria-label="Terima kasih">
+<section class="thanks" id="thanks" aria-label="Thank you">
   <p class="thanks__see" data-rise style="--d:0.06s" data-text="seeYou">see you</p>
 
   <div class="thanks__stats" data-rise style="--d:0.22s">
@@ -113,7 +114,7 @@
 
   <div class="thanks__actions" data-rise style="--d:0.78s">
     <button class="btn btn--ghost" type="button" id="thanks-back" data-text="btn.back">back</button>
-    <button class="btn" type="button" id="thanks-edit" data-text="btn.edit">edit tanggal</button>
+    <button class="btn" type="button" id="thanks-edit" data-text="btn.edit">edit dates</button>
   </div>
 </section>
 

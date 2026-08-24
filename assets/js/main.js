@@ -1,5 +1,5 @@
 /* =========================================================
-   Render isi halaman: undangan, agenda, voting.
+   Renders the page: invitation, agenda, availability.
    ========================================================= */
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -14,7 +14,7 @@ function esc(str) {
   })[c]);
 }
 
-/* ---------- ambil teks dari TEXT ---------- */
+/* ---------- pulling strings out of TEXT ---------- */
 
 function t(path, fallback = "") {
   const value = String(path)
@@ -32,7 +32,7 @@ function applyText() {
   });
 }
 
-/* ---------- baris kode undangan ---------- */
+/* ---------- invitation code lines ---------- */
 
 function codeLines(guest) {
   return `<p class="hero__code">
@@ -44,9 +44,9 @@ function codeLines(guest) {
   </p>`;
 }
 
-/* ---------- logo ---------- */
+/* ---------- marks and logos ---------- */
 
-/* Dipecah tiga supaya "<" dan ">" bisa digerakin merapat ke "/". */
+/* Split in three so the angle brackets can close in on the slash. */
 function markHTML() {
   return `<span class="mk">
     <span class="mk__l">&lt;</span><span class="mk__s">/</span><span class="mk__r">&gt;</span>
@@ -61,8 +61,8 @@ function renderMarks() {
 
 
 
-/* Dipakai di header, footer, dan halaman terakhir dengan ukuran beda,
-   jadi digambar sekali di sini. */
+/* Used in the header, the footer and the closing screen at different
+   sizes, so it is drawn once here. */
 function logosHTML(size) {
   const g = Math.round(size * 0.92);
   return `
@@ -94,11 +94,11 @@ function renderLogos() {
   });
 }
 
-/* ---------- animasi muncul ---------- */
+/* ---------- entrance animation ---------- */
 
 function playRise(scope) {
-  /* Dua frame: yang pertama buat ngecat posisi awal, kalau nggak
-     transisinya kelewat dan elemennya langsung nongol. */
+  /* Two frames: the first paints the start state. Without it the
+     transition is skipped and things simply appear. */
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       scope.querySelectorAll("[data-rise]").forEach((el) => {
@@ -108,7 +108,7 @@ function playRise(scope) {
   });
 }
 
-/* Yang di bawah lipatan baru muncul begitu ke-scroll. */
+/* Anything below the fold waits until it is scrolled to. */
 function watchRise(scope) {
   const items = [...scope.querySelectorAll("[data-rise]")];
   if (!items.length) return;
@@ -131,7 +131,7 @@ function watchRise(scope) {
   items.forEach((el) => io.observe(el));
 }
 
-/* ---------- glitch undangan ---------- */
+/* ---------- invitation glitch ---------- */
 
 const NOISE = "!<>-_\\/[]{}=+*^?#%$&@01";
 
@@ -140,8 +140,8 @@ const noiseLike = (text) =>
     .map((ch) => (ch === " " ? " " : NOISE[Math.floor(Math.random() * NOISE.length)]))
     .join("");
 
-/* Tiap baris ngaco dulu sebentar — merah, huruf acak — baru
-   ngebenerin diri jadi teks yang bener. */
+/* Each line lands garbled and red for a moment, then corrects itself
+   into the real text. */
 function glitchLine(line, delay) {
   const finalHTML = line.innerHTML;
   const text = line.textContent;
@@ -181,7 +181,7 @@ function playGlitch(card) {
   lines.forEach((line, i) => glitchLine(line, 120 + i * 150));
 }
 
-/* ---------- siapa yang diundang ---------- *//* ---------- siapa yang diundang ---------- */
+/* ---------- who this invitation is for ---------- *//* ---------- who this invitation is for ---------- */
 
 function currentGuest() {
   const params = new URLSearchParams(location.search);
@@ -191,7 +191,7 @@ function currentGuest() {
   return GUESTS.find((g) => g.slug === raw) || GUESTS[0];
 }
 
-/* ---------- slide 1: undangan ---------- */
+/* ---------- the invitation ---------- */
 
 function renderHero(guest) {
   const host = $("#hero-card");
@@ -226,7 +226,7 @@ function renderHero(guest) {
   playRise(host);
 }
 
-/* ---------- slide 2: agenda ---------- */
+/* ---------- agenda ---------- */
 
 function renderAgenda() {
   const host = $("#agenda-list");
@@ -241,10 +241,10 @@ function renderAgenda() {
   ).join("");
 }
 
-/* ---------- undangan -> loading -> agenda ---------- */
+/* ---------- invitation -> loading -> agenda ---------- */
 
 function initGate() {
-  const screen = $("#undanganku");
+  const screen = $("#invite");
   const gate = $("#gate");
   if (!screen || !gate) return;
 
@@ -284,10 +284,10 @@ function initGate() {
   screen.addEventListener("touchmove", onScrollDown, { passive: true });
 }
 
-/* ---------- petunjuk scroll ---------- */
+/* ---------- scroll hint ---------- */
 
-/* Cue-nya hilang setelah orangnya benar-benar scroll, bukan sekadar
-   begitu section voting kesenggol layar. */
+/* The hint goes once someone actually scrolls, not the moment the
+   section below happens to touch the viewport. */
 function armCue() {
   const cue = $("#cue");
   if (!cue) return;

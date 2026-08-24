@@ -1,11 +1,11 @@
 /* =========================================================
-   Penyimpanan voting.
+   Where answers are stored.
 
-   Bentuk data bersama:
+   The shared shape:
      { "kean": { "dates": ["2026-09-09"], "at": 1692800000000 } }
 
-   Hanya yang sudah submit yang masuk ke sini, jadi isi objek ini
-   sama dengan isi heatmap.
+   Only submitted answers land here, so this object and the heatmap
+   always say the same thing.
    ========================================================= */
 
 const STORE_KEY = "bemftui2026.vote.v2";
@@ -21,7 +21,7 @@ function safeParse(raw, fallback) {
   }
 }
 
-/* Terima bentuk lama (array tanggal) maupun baru (objek). */
+/* Accepts both the old shape (a bare array) and the current one. */
 function normalizeVotes(raw) {
   const out = {};
   if (!raw || typeof raw !== "object") return out;
@@ -41,7 +41,7 @@ function normalizeVotes(raw) {
   return out;
 }
 
-/* --- penyimpanan lokal (buat nyoba tanpa server) --- */
+/* --- local storage (for trying things without a server) --- */
 
 const LocalStore = {
   mode: "local",
@@ -58,13 +58,13 @@ const LocalStore = {
     try {
       localStorage.setItem(STORE_KEY, JSON.stringify(data));
     } catch {
-      /* private mode / penuh — voting tetap jalan di memori */
+      /* private mode or full storage — answers still work in memory */
     }
     return data;
   },
 };
 
-/* --- penyimpanan bersama --- */
+/* --- shared storage --- */
 
 function RemoteStore(url, headers) {
   return {
@@ -77,7 +77,7 @@ function RemoteStore(url, headers) {
       });
       if (!res.ok) throw new Error("GET " + res.status);
       const body = await res.json();
-      /* Sebagian layanan membungkus isinya di dalam "record". */
+      /* Some services wrap the payload in a "record" field. */
       return normalizeVotes(body && body.record ? body.record : body);
     },
 
@@ -93,7 +93,7 @@ function RemoteStore(url, headers) {
   };
 }
 
-/* JSONBin: baca dan tulis beda alamat, jadi dibungkus sendiri. */
+/* JSONBin reads and writes at different URLs, hence its own adapter. */
 function JsonbinStore(id, key) {
   const base = `https://api.jsonbin.io/v3/b/${id}`;
   const auth = { "X-Master-Key": key, "X-Bin-Versioning": "false" };
@@ -130,7 +130,7 @@ function makeStore() {
   return LocalStore;
 }
 
-/* --- pilihan yang belum disubmit, disimpan di browser sendiri --- */
+/* --- picks not yet submitted, kept in this browser only --- */
 
 const Draft = {
   get(user) {
@@ -147,7 +147,7 @@ const Draft = {
       all[user] = dates;
       localStorage.setItem(DRAFT_KEY, JSON.stringify(all));
     } catch {
-      /* diabaikan */
+      /* ignored */
     }
   },
 };

@@ -1,12 +1,12 @@
 /* =========================================================
    BEM FTUI 2026 — Malam Sekolah Media
-   Data undangan, agenda, dan checklist persiapan.
+   Guest list, agenda and calendar settings.
    ========================================================= */
 
 /* =========================================================
-   SEMUA TEKS WEBSITE ADA DI FILE INI.
-   Ganti tulisan di dalam tanda kutip "..." saja.
-   Jangan hapus tanda kutip, koma, atau kurung.
+   EVERY WORD THE PAGE SHOWS LIVES IN THIS FILE.
+   Change only the text inside the "..." quotes.
+   Do not remove the quotes, commas or brackets.
    ========================================================= */
 
 const TEXT = {
@@ -16,20 +16,20 @@ const TEXT = {
   gate: "</>",
   loading: "</>",
   seeYou: "see you",
-  votingLabel: "kapan kamu bisa",
+  votingLabel: "when are you free",
 
   btn: {
     submit: "submit",
     resubmit: "update",
     back: "back",
-    edit: "edit tanggal",
-    hapus: "hapus",
-    hapusYakin: "yakin?",
+    edit: "edit dates",
+    clear: "clear",
+    clearSure: "sure?",
   },
 
   vote: {
-    lokal: "lokal",
-    sync: "sync",
+    local: "local",
+    synced: "synced",
   },
 };
 
@@ -40,7 +40,7 @@ const EVENT = {
   site: "www.bemftui2026.com",
 };
 
-/* 12 undangan — formatnya sama semua, cuma nama yang beda. */
+/* One invitation per person — same layout, only the name differs. */
 const GUESTS = [
   { slug: "kean", name: "Kean" },
   { slug: "jason", name: "Jason" },
@@ -54,6 +54,11 @@ const GUESTS = [
   { slug: "olel", name: "Olel" },
   { slug: "shey", name: "Shey" },
   { slug: "ken", name: "Ken" },
+  { slug: "dio", name: "Dio" },
+  { slug: "feb", name: "Feb" },
+  { slug: "jata", name: "Jata" },
+  { slug: "ghani", name: "Ghani" },
+  { slug: "agnes", name: "Agnes" },
 ];
 
 const AGENDA = [
@@ -64,10 +69,10 @@ const AGENDA = [
   { no: "05", title: "a whole day and night medz" },
 ];
 
-/* Kalender voting — September 2026 */
+/* Availability calendar — September 2026 */
 const VOTE = {
   year: 2026,
   month: 9,
-  maxPicksPerUser: 0, /* 0 = bebas, isi angka kalau mau dibatasi */
-  pollSeconds: 10,    /* seberapa sering narik data orang lain */
+  maxPicksPerUser: 0, /* 0 = unlimited; set a number to cap it */
+  pollSeconds: 10,    /* how often to pull in everyone else's answers */
 };

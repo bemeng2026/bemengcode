@@ -1,59 +1,60 @@
 # Malam Sekolah Media — BEM FTUI 2026
 
-Static site. HTML + CSS + JS, tanpa build.
+Static site. HTML, CSS and JavaScript, no build step.
 
 ```bash
 python3 -m http.server 8000
 ```
 
-## Struktur
+## Layout
 
 ```
 index.html
 assets/css/style.css
-assets/js/config.js     # endpoint voting
-assets/js/data.js       # teks, tamu, agenda, setelan voting
-assets/js/storage.js    # localStorage / endpoint
-assets/js/calendar.js   # kalender + heatmap
-assets/js/main.js       # render
+assets/js/config.js     # where answers are stored
+assets/js/data.js       # text, guests, agenda, calendar settings
+assets/js/storage.js    # localStorage or an endpoint
+assets/js/calendar.js   # calendar, heatmap, sync
+assets/js/main.js       # rendering
 ```
 
-## Ngedit teks
+## Editing the words
 
-Semua tulisan yang tampil di halaman ada di `assets/js/data.js`:
-`TEXT` (label & judul), `EVENT` (tanggal & situs), `GUESTS` (12 nama),
-`AGENDA`.
+Everything the page shows lives in `assets/js/data.js`: `TEXT` for labels
+and headings, `EVENT` for the date and site, `GUESTS` for the invitations,
+`AGENDA` for the five sessions.
 
-Ganti isi di dalam tanda kutip `"..."` saja. Jangan hapus tanda kutip,
-koma, atau kurung.
+Change only what is inside the `"..."` quotes. Leave the quotes, commas
+and brackets alone.
 
-## Undangan
+## Invitations
 
 `index.html?u=<slug>` — kean, jason, barez, udin, razel, muti, muna, jpg,
-lunci, olel, shey, ken. Default: kean.
+lunci, olel, shey, ken, dio, feb, jata, ghani, agnes. Defaults to kean.
 
-Semua undangan formatnya sama, cuma nama yang beda — tiap orang dikirimi
-link-nya sendiri. Tambah/ganti orang: array `GUESTS` di `data.js`.
+Every invitation uses the same layout and only the name differs; each
+person gets their own link. Add or rename people in `GUESTS` in `data.js`,
+then regenerate `vote-seed.json` to match.
 
-Alur halaman: undangan satu layar penuh, tap `</>` (atau scroll) buat
-loading, lalu agenda, voting, submit, halaman terima kasih.
+Page flow: the invitation fills one screen, tapping `</>` (or scrolling)
+plays a short loading state, then the agenda, the calendar, submit, and a
+closing screen.
 
-Tema light saja. Logo di halaman terima kasih digambar ulang pakai SVG
-inline, bukan aset resmi.
+Light theme only. The three marks on the closing screen are inline SVG
+drawn here, not official brand assets.
 
-## Voting
+## Availability
 
-Siapa yang voting diambil dari `?u=` di link, jadi nggak ada isian
-username. Setelan di `VOTE` (`data.js`): `year`, `month`,
-`maxParticipants` (20), `maxPicksPerUser` (`0` = bebas).
+Pick your free dates — drag across the grid to mark a run in one gesture,
+or tap single days — then submit. Only submitted answers reach the
+heatmap. The chips in the left panel show who has answered so far.
 
-Pilih tanggal dulu (draft, tersimpan di browser sendiri), lalu submit.
-Yang masuk heatmap hanya yang sudah submit. Deretan chip di panel kiri
-nunjukin siapa dari 12 orang yang sudah masuk.
+Settings live in `VOTE` (`data.js`): `year`, `month`, `maxPicksPerUser`
+(`0` for unlimited) and `pollSeconds`.
 
-Default `localStorage` — suara per browser, nggak kelihatan antar orang.
-Buat papan bersama, cara tercepat lewat JSONBin: bikin bin berisi isi
-`vote-seed.json` (JSONBin nolak bin kosong), lalu isi `config.js`:
+Answers are shared through JSONBin. To point it somewhere else, create a
+bin holding the contents of `vote-seed.json` (JSONBin rejects an empty
+bin) and fill in `config.js`:
 
 ```js
 window.BEMFTUI_CONFIG = {
@@ -62,16 +63,30 @@ window.BEMFTUI_CONFIG = {
 };
 ```
 
-Endpoint lain juga bisa lewat `apiUrl`, asal melayani `GET` dan `PUT`
-dengan bentuk:
+Any other endpoint works through `apiUrl`, as long as it serves `GET` and
+`PUT` of:
 
 ```json
 { "kean": { "dates": ["2026-09-09"], "at": 1692800000000 } }
 ```
 
-Halaman narik data tiap `VOTE.pollSeconds` detik (default 5) dan pas tab
-dibuka lagi, jadi submit orang lain muncul tanpa reload. Sebelum nulis
-selalu baca ulang, jadi submit barengan nggak saling nimpa.
+The page pulls every `VOTE.pollSeconds` seconds and on tab focus, so other
+people's answers appear without a reload, and it re-reads before writing
+so simultaneous answers do not overwrite each other.
 
-Kunci di `config.js` kebaca siapa pun yang buka halaman, jadi pakai
-akun JSONBin khusus buat ini.
+The key in `config.js` is readable by anyone who opens the page, so use a
+JSONBin account kept only for this, and regenerate the key once the date
+is settled.
+
+## Deploy (GitHub Pages, free)
+
+Pages on a private repo needs a paid plan, so the repository has to be
+public. Settings → General → Change visibility → Public, then
+Settings → Pages → Deploy from a branch → this branch, folder `/ (root)`
+→ Save.
+
+Live at `https://bemeng2026.github.io/bemengcode/?u=kean`. Every asset
+path is relative, so it runs from a subfolder.
+
+Answers only work on a properly hosted site. Inside the claude.ai Artifact
+preview the CSP blocks outbound requests, so submitting fails there.

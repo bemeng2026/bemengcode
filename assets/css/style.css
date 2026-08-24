@@ -30,12 +30,19 @@
   --green-deep: #0b5f34;
 
   --font: "Helvetica Neue", Helvetica, Arial, "Segoe UI", Roboto, sans-serif;
-  --radius: 22px;
-  --radius-sm: 14px;
+  /* One radius scale, sized the way iOS sizes its corners. */
+  --r-xs: 10px;
+  --r-sm: 14px;
+  --r-md: 20px;
+  --r-lg: 28px;
+  --r-pill: 999px;
+
+  --radius: var(--r-lg);
+  --radius-sm: var(--r-sm);
   --maxw: 1080px;
 
-  /* Permukaan kaca ala iOS: tembus pandang, diblur, dengan garis
-     terang di tepi atas biar kebaca sebagai lapisan. */
+  /* iOS-style glass: translucent, blurred, with a bright top edge
+     so it reads as a layer. */
   --glass: rgba(255, 255, 255, 0.62);
   --glass-strong: rgba(255, 255, 255, 0.78);
   --glass-edge: rgba(255, 255, 255, 0.85);
@@ -55,7 +62,25 @@
 
 [hidden] { display: none !important; }
 
-/* Ornamen naik pelan dari bawah. */
+/* iOS corners are not circular arcs — they ease into the straight edge.
+   Browsers that can draw that get it; the rest keep plain rounding. */
+@supports (corner-shape: squircle) {
+  .card,
+  .panel,
+  .btn,
+  .runbar,
+  .day,
+  .pod,
+  .mini__c,
+  .who,
+  .rost,
+  .gate,
+  .thanks__actions .btn {
+    corner-shape: squircle;
+  }
+}
+
+/* Ornaments drift up into place. */
 [data-rise] {
   opacity: 0;
   transform: translateY(16px);
@@ -76,8 +101,8 @@ html { scroll-behavior: smooth; }
   }
 }
 
-/* Kaca cuma kebaca kalau ada sesuatu di belakangnya. Ini lapisan
-   warna lembut yang jadi bahan blur-nya. */
+/* Glass only reads when there is something behind it. This is the soft
+   wash the blur has to work with. */
 body::before {
   content: "";
   position: fixed;
@@ -166,7 +191,7 @@ a { color: var(--blue); }
   text-decoration: none;
   font-size: 13px;
   padding: 6px 10px;
-  border-radius: 6px;
+  border-radius: var(--r-xs);
   white-space: nowrap;
 }
 .topbar__nav a:hover { color: var(--ink); background: var(--bg-sunken); }
@@ -179,7 +204,7 @@ a { color: var(--blue); }
 .comment { color: var(--green); }
 .kw { color: var(--blue); }
 
-/* ---------- undangan ---------- */
+/* ---------- invitation ---------- */
 
 
 
@@ -213,8 +238,7 @@ a { color: var(--blue); }
 .hero__body { padding: clamp(28px, 6vw, 56px); }
 
 .hero__code {
-  /* Ukurannya dipatok supaya "//You are Invited" muat satu baris
-     bahkan di layar 360px. */
+  /* Sized so "//You are Invited" fits on one line even at 360px. */
   font-size: clamp(23px, 5.9vw, 58px);
   line-height: 1.28;
   letter-spacing: -0.035em;
@@ -235,16 +259,16 @@ a { color: var(--blue); }
 .hero__code .cm { color: var(--green); }
 .hero__code .tg { color: var(--blue); }
 
-/* Keadaan "error" sewaktu baris masih ngaco. Ditaruh sesudah aturan
-   warna .cm/.tg dan dikasih .l.l--err supaya baris hijau dan birunya
-   ikut jadi merah. */
+/* The "error" state while a line is still garbled. Placed after the
+   .cm/.tg colour rules and given .l.l--err so the green and blue lines
+   turn red too. */
 .hero__code .l.l--err {
   color: #dc2626;
   text-shadow: 1.5px 0 0 rgba(37, 99, 235, 0.5), -1.5px 0 0 rgba(220, 38, 38, 0.4);
   animation: jitter 0.12s steps(2, end) infinite;
 }
 
-/* Kedipan singkat pas barisnya baru bener. */
+/* A brief flicker as the line resolves. */
 .hero__code .l.l--ok { animation: settle 0.42s ease-out; }
 
 @keyframes jitter {
@@ -285,7 +309,7 @@ a { color: var(--blue); }
   font-size: 14px;
   font-weight: 600;
   padding: 13px 22px;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   border: 1px solid rgba(17, 24, 39, 0.9);
   background: rgba(24, 26, 30, 0.92);
   backdrop-filter: var(--blur);
@@ -314,11 +338,11 @@ a { color: var(--blue); }
   transform: none;
 }
 
-/* ---------- layar undangan ---------- */
+/* ---------- invitation screen ---------- */
 
 .screen {
-  /* Dikurangi tinggi topbar, kalau nggak kartunya kedorong ke bawah
-     dan ruang atas-bawahnya jadi timpang. */
+  /* Minus the top bar, otherwise the card sits low and the space above
+     and below it is lopsided. */
   min-height: calc(100dvh - 56px);
   display: flex;
   flex-direction: column;
@@ -326,9 +350,9 @@ a { color: var(--blue); }
   padding: 40px 0;
 }
 
-/* Tombol lanjut nempel di kaki kartu, sejajar dengan bar judul
-   di atasnya — jadi kebaca sebagai satu kesatuan, bukan tombol
-   nyasar di tengah kekosongan. */
+/* The next control sits along the foot of the card, mirroring the title
+   bar above it, so the card reads as one object rather than a button
+   stranded in whitespace. */
 .runbar {
   position: relative;
   display: flex;
@@ -362,7 +386,7 @@ a { color: var(--blue); }
   animation: nudge 1.9s ease-in-out infinite;
 }
 
-/* Sapuan terang yang lewat sesekali, biar matanya ketarik ke sini. */
+/* A light sweep passes through now and then to catch the eye. */
 .runbar__sweep {
   position: absolute;
   inset: 0;
@@ -416,7 +440,7 @@ body[data-stage="loading"] .load { display: flex; }
 .load__bar {
   width: min(220px, 60vw);
   height: 3px;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   background: var(--bg-sunken);
   overflow: hidden;
 }
@@ -426,7 +450,7 @@ body[data-stage="loading"] .load { display: flex; }
   height: 100%;
   width: 0;
   background: var(--blue);
-  border-radius: 999px;
+  border-radius: var(--r-pill);
 }
 
 body[data-stage="loading"] .load__fill { animation: fill 1.3s ease-out forwards; }
@@ -436,12 +460,12 @@ body[data-stage="loading"] .load__fill { animation: fill 1.3s ease-out forwards;
   to { width: 100%; }
 }
 
-/* isi setelah loading */
+/* everything past the loading screen */
 
 body[data-stage="invite"] .rest,
 body[data-stage="loading"] .rest { display: none; }
 
-/* ---------- agenda sebagai daftar task ---------- */
+/* ---------- agenda as a task list ---------- */
 
 .label {
   font-size: 13px;
@@ -478,7 +502,7 @@ body[data-stage="loading"] .rest { display: none; }
   letter-spacing: -0.02em;
 }
 
-/* ---------- logo </> ---------- */
+/* ---------- the </> mark ---------- */
 
 .mk {
   display: inline-flex;
@@ -495,7 +519,7 @@ body[data-stage="loading"] .rest { display: none; }
 
 .mk__r { animation-name: squeezeR; }
 
-/* Kurung merapat ke garis miringnya, lalu balik lagi. */
+/* The brackets close in on the slash, then ease back out. */
 @keyframes squeeze {
   0%, 22% { transform: translateX(0); }
   42%, 58% { transform: translateX(0.19em); }
@@ -508,7 +532,7 @@ body[data-stage="loading"] .rest { display: none; }
   80%, 100% { transform: translateX(0); }
 }
 
-/* ---------- petunjuk scroll ---------- */
+/* ---------- scroll hint ---------- */
 
 .cue {
   display: flex;
@@ -526,7 +550,7 @@ body[data-stage="loading"] .rest { display: none; }
   50% { transform: translateY(7px); opacity: 1; }
 }
 
-/* ---------- calendar voting ---------- */
+/* ---------- availability calendar ---------- */
 
 .vote { display: grid; grid-template-columns: 320px 1fr; gap: 24px; align-items: start; }
 
@@ -539,14 +563,21 @@ body[data-stage="loading"] .rest { display: none; }
   align-items: center;
   gap: 10px;
   padding: 13px 16px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-sm);
   border: 1px solid rgba(255, 255, 255, 0.6);
   background: rgba(255, 255, 255, 0.5);
   font-size: 13px;
   margin-bottom: 16px;
 }
 .who strong { color: var(--blue); }
-.who .comment { margin-left: auto; }
+
+.who__n {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
 .cal__head {
   display: flex;
   align-items: baseline;
@@ -560,8 +591,7 @@ body[data-stage="loading"] .rest { display: none; }
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 5px;
-  /* Biar geser mendatar kebaca sebagai nandain hari, tapi scroll
-     tegak halaman tetap jalan. */
+  /* Sideways drags mark days; the page still scrolls vertically. */
   touch-action: pan-y;
 }
 
@@ -602,7 +632,6 @@ body[data-stage="loading"] .rest { display: none; }
   letter-spacing: -0.01em;
 }
 
-/* Jumlah suara nempel di pojok, biar angka tanggalnya tetap dominan. */
 .day__c {
   position: absolute;
   top: 4px;
@@ -619,11 +648,10 @@ body[data-stage="loading"] .rest { display: none; }
 .day--h4 { background: var(--heat-4); color: #fff; border-color: rgba(255, 255, 255, 0.4); }
 .day--h5 { background: var(--heat-5); color: #fff; border-color: rgba(255, 255, 255, 0.3); }
 
-/* Dua hal beda dipetakan ke dua kanal beda supaya nggak saling nabrak:
-   ISI kotak = berapa orang yang milih (hasil bersama),
-   CINCIN    = tanggal yang KAMU pilih.
-   Cincinnya dua lapis, celah putih di dalam, jadi tetap kebaca di atas
-   hijau paling muda maupun paling tua. */
+/* Two different things map to two different channels so they never
+   collide: the FILL says how many people are free (the shared result),
+   the RING says which days are YOURS. The ring is two layers with a
+   white gap, so it stays legible over the palest and darkest greens. */
 .day--mine {
   border-color: var(--green-deep);
   box-shadow: inset 0 0 0 2.5px #fff, inset 0 0 0 5px var(--green-deep);
@@ -631,7 +659,7 @@ body[data-stage="loading"] .rest { display: none; }
 
 .day--mine .day__n { font-weight: 800; }
 
-/* Centang kecil: bacanya "gua bisa", bukan sekadar "kepilih". */
+/* A small tick: reads as "I can make it", not merely "selected". */
 .day--mine::after {
   content: "";
   position: absolute;
@@ -655,7 +683,7 @@ body[data-stage="loading"] .rest { display: none; }
   gap: 4px;
   margin-top: 16px;
 }
-.legend__sw { width: 16px; height: 16px; border-radius: 4px; border: 1px solid var(--line); }
+.legend__sw { width: 16px; height: 16px; border-radius: 5px; border: 1px solid var(--line); }
 
 .roster {
   display: flex;
@@ -668,14 +696,14 @@ body[data-stage="loading"] .rest { display: none; }
   font-size: 11px;
   line-height: 1;
   padding: 6px 10px;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   border: 1px solid rgba(255, 255, 255, 0.7);
   background: rgba(255, 255, 255, 0.55);
   color: var(--ink-faint);
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
 }
 
-/* Nama yang sudah ngevote jadi hijau. */
+/* Names turn green once that person has answered. */
 .rost--in {
   background: var(--green);
   border-color: rgba(255, 255, 255, 0.5);
@@ -706,7 +734,7 @@ body[data-stage="loading"] .rest { display: none; }
 
 .top3__bar {
   height: 10px;
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   background: rgba(17, 24, 39, 0.07);
   overflow: hidden;
 }
@@ -714,7 +742,7 @@ body[data-stage="loading"] .rest { display: none; }
   display: block;
   height: 100%;
   background: var(--green);
-  border-radius: 999px;
+  border-radius: var(--r-pill);
 }
 
 .top3 li:first-child .top3__bar span { background: var(--green-deep); }
@@ -727,10 +755,10 @@ body[data-stage="loading"] .rest { display: none; }
 
 .tools { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 
-.submit { width: 100%; justify-content: center; margin-top: 12px; }
+.submit { width: 100%; justify-content: center; margin-top: 12px; border-radius: var(--r-pill); }
 .tools .btn { font-size: 12px; padding: 8px 12px; }
 
-/* ---------- halaman terima kasih ---------- */
+/* ---------- closing screen ---------- */
 
 .thanks {
   position: fixed;
@@ -749,8 +777,8 @@ body[data-stage="loading"] .rest { display: none; }
 
 body[data-stage="done"] .thanks { display: flex; }
 
-/* Layarnya sendiri ikut naik, biar munculnya kerasa bukan cuma
-   ganti halaman gitu aja. */
+/* The layer itself fades up, so arriving feels like an event rather
+   than a page swap. */
 body[data-stage="done"] .thanks { animation: veil 0.45s ease-out; }
 
 @keyframes veil {
@@ -758,7 +786,7 @@ body[data-stage="done"] .thanks { animation: veil 0.45s ease-out; }
   to { opacity: 1; }
 }
 
-/* Isi halaman terakhir naik lebih jauh dan sedikit membesar. */
+/* Its contents rise further and scale up slightly. */
 .thanks [data-rise] {
   transform: translateY(26px) scale(0.965);
   transition: opacity 0.72s cubic-bezier(0.22, 0.72, 0.24, 1),
@@ -805,7 +833,7 @@ body[data-stage="done"] { overflow: hidden; }
   justify-items: center;
 }
 
-/* Sebulan penuh, kecil, cuma buat dilihat. */
+/* A whole month, small, just to look at. */
 .mini {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -817,7 +845,7 @@ body[data-stage="done"] { overflow: hidden; }
   aspect-ratio: 1;
   display: grid;
   place-items: center;
-  border-radius: 7px;
+  border-radius: var(--r-xs);
   border: 1px solid rgba(255, 255, 255, 0.6);
   background: rgba(255, 255, 255, 0.55);
   font-size: 10px;
@@ -836,7 +864,7 @@ body[data-stage="done"] { overflow: hidden; }
 
 .mini__c--mine { box-shadow: inset 0 0 0 1.5px #fff, inset 0 0 0 3px var(--green-deep); }
 
-/* Tiga teratas, tanpa angka jumlah. */
+/* The three best dates, with no counts. */
 .podium {
   display: flex;
   align-items: flex-end;
@@ -848,7 +876,7 @@ body[data-stage="done"] { overflow: hidden; }
   display: grid;
   place-items: center;
   gap: 1px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--r-md);
   border: 1px solid rgba(255, 255, 255, 0.6);
   background: rgba(255, 255, 255, 0.6);
   box-shadow: var(--shadow-sm);
