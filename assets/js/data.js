@@ -17,7 +17,6 @@ const TEXT = {
   loading: "</>",
   seeYou: "see you",
   votingLabel: "vote tanggal konsol",
-  briefBring: "bring",
   seeYouAt: "and at RABID 4",
 
   btn: {
@@ -64,20 +63,29 @@ const GUESTS = [
   { slug: "reyhan", name: "Reyhan" },
 ];
 
-/* The meeting where the console date gets decided. */
+/* The meeting where the console date gets decided. Kept in Indonesian,
+   exactly as it was announced. */
 const BRIEFING = {
   title: "RABID 4 REMEDIAL",
-  when: "Tue, 1 September 2026",
   whenShort: "1 Sep",
-  time: "18.00–21.00",
   place: "Ruang BEM",
-  agenda: [
-    "Media school website and portfolio",
-    "Work programme leads for Q3A",
-    "IKM anniversary x Guyub 2026",
-    "DATE AND PLACE FOR KOOONSOL",
+
+  meta: [
+    { icon: "\u{1F5D3}\uFE0F", label: "Hari/tgl", value: "Selasa, 1 September 2026" },
+    { icon: "\u23F0", label: "Waktu", value: "18.00-21.00" },
+    { icon: "\u{1F4CD}", label: "Tempat", value: "Ruang BEM" },
   ],
-  bring: ["Laptop", "Framer downloaded"],
+
+  agendaLabel: "Agenda",
+  agenda: [
+    "Sekolah Media Website dan Portofolio",
+    "Pembahasan PJ Program Kerja TW 3A",
+    "Hut IKM X Guyub 2026",
+    "TANGGAL DAN TEMPAT KOOONSOL",
+  ],
+
+  todoLabel: "\u{1F4CC} To do list",
+  todo: ["Bawa laptop dan download Framer"],
 };
 
 /* Availability calendar — September 2026 */

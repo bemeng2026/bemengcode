@@ -22,7 +22,7 @@ assets/js/main.js       # rendering
 
 Everything the page shows lives in `assets/js/data.js`: `TEXT` for labels
 and headings, `EVENT` for the date and site, `GUESTS` for the invitations,
-`BRIEFING` for the meeting details.
+`BRIEFING` for the meeting details (kept in Indonesian, as announced).
 
 Change only what is inside the `"..."` quotes. Leave the quotes, commas
 and brackets alone.

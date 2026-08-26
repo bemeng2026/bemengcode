@@ -238,28 +238,41 @@ function renderBrief() {
   const host = $("#brief-card");
   if (!host) return;
 
+  const list = (items) =>
+    items
+      .map(
+        (x, i) => `
+      <li>
+        <span class="brief__no">${i + 1}.</span>
+        <span>${esc(x)}</span>
+      </li>`
+      )
+      .join("");
+
   host.innerHTML = `
-    <h3 class="brief__title">${esc(BRIEFING.title)}</h3>
-    <p class="brief__meta">
-      <span>${esc(BRIEFING.when)}</span>
-      <span>${esc(BRIEFING.time)}</span>
-      <span>${esc(BRIEFING.place)}</span>
-    </p>
-    <ol class="brief__list">
-      ${BRIEFING.agenda
+    <h3 class="brief__title">[${esc(BRIEFING.title)}]</h3>
+
+    <dl class="brief__meta">
+      ${BRIEFING.meta
         .map(
-          (a, i) => `
-        <li>
-          <span class="brief__no">${String(i + 1).padStart(2, "0")}</span>
-          <span>${esc(a)}</span>
-        </li>`
+          (m) => `
+        <div>
+          <dt><span class="brief__icon">${esc(m.icon)}</span>${esc(m.label)}</dt>
+          <dd>${esc(m.value)}</dd>
+        </div>`
         )
         .join("")}
-    </ol>
-    <p class="brief__bring">
-      <span class="brief__tag">${esc(t("briefBring"))}</span>
-      <span>${BRIEFING.bring.map(esc).join(" &middot; ")}</span>
-    </p>`;
+    </dl>
+
+    <div class="brief__block">
+      <p class="brief__head">${esc(BRIEFING.agendaLabel)} :</p>
+      <ol class="brief__list">${list(BRIEFING.agenda)}</ol>
+    </div>
+
+    <div class="brief__block">
+      <p class="brief__head">${esc(BRIEFING.todoLabel)} :</p>
+      <ol class="brief__list">${list(BRIEFING.todo)}</ol>
+    </div>`;
 }
 
 /* ---------- invitation -> loading -> agenda ---------- */

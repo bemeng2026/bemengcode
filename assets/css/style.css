@@ -162,8 +162,7 @@ a { color: var(--blue); }
 
 .topbar__mark {
   font-weight: 700;
-  font-size: 15px;
-  letter-spacing: -0.03em;
+  font-size: 16px;
   color: var(--blue);
 }
 
@@ -366,9 +365,8 @@ a { color: var(--blue); }
   background: rgba(37, 99, 235, 0.09);
   color: var(--blue);
   font-family: var(--font);
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
-  letter-spacing: -0.02em;
   cursor: pointer;
   overflow: hidden;
 }
@@ -428,7 +426,6 @@ body[data-stage="loading"] .load { display: flex; }
   font-size: clamp(44px, 12vw, 84px);
   font-weight: 700;
   color: var(--blue);
-  letter-spacing: -0.03em;
   animation: blink 0.7s steps(2, end) infinite;
 }
 
@@ -482,7 +479,10 @@ body[data-stage="loading"] .rest { display: none; }
   display: inline-flex;
   align-items: baseline;
   white-space: nowrap;
-  letter-spacing: 0;
+  /* Tracking is reset here: the containers run tight negative tracking,
+     which on top of the animation slid the brackets over the slash. */
+  letter-spacing: normal;
+  gap: 0.13em;
 }
 
 .mk__l,
@@ -494,15 +494,16 @@ body[data-stage="loading"] .rest { display: none; }
 .mk__r { animation-name: squeezeR; }
 
 /* The brackets close in on the slash, then ease back out. */
+/* They lean in, they never touch. */
 @keyframes squeeze {
   0%, 22% { transform: translateX(0); }
-  42%, 58% { transform: translateX(0.19em); }
+  42%, 58% { transform: translateX(0.07em); }
   80%, 100% { transform: translateX(0); }
 }
 
 @keyframes squeezeR {
   0%, 22% { transform: translateX(0); }
-  42%, 58% { transform: translateX(-0.19em); }
+  42%, 58% { transform: translateX(-0.07em); }
   80%, 100% { transform: translateX(0); }
 }
 
@@ -526,23 +527,47 @@ body[data-stage="loading"] .rest { display: none; }
 
 /* ---------- meeting briefing ---------- */
 
-.brief { display: grid; gap: 18px; }
+.brief { display: grid; gap: 22px; }
 
 .brief__title {
   margin: 0;
-  font-size: clamp(19px, 4.2vw, 24px);
+  font-size: clamp(18px, 4.2vw, 23px);
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
-.brief__meta {
+.brief__meta { margin: 0; display: grid; gap: 7px; }
+
+.brief__meta div {
+  display: grid;
+  grid-template-columns: minmax(0, 92px) 1fr;
+  gap: 4px 10px;
+  align-items: baseline;
+  font-size: 13.5px;
+}
+
+.brief__meta dt {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px 18px;
-  margin: 0;
-  font-size: 12.5px;
+  align-items: baseline;
+  gap: 6px;
   color: var(--ink-soft);
+}
+
+.brief__meta dd {
+  margin: 0;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
+}
+
+.brief__icon { font-size: 12px; line-height: 1; }
+
+.brief__block { display: grid; gap: 8px; }
+
+.brief__head {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-soft);
 }
 
 .brief__list {
@@ -550,49 +575,27 @@ body[data-stage="loading"] .rest { display: none; }
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 2px;
+  gap: 7px;
 }
 
 .brief__list li {
   display: grid;
-  grid-template-columns: 30px 1fr;
-  gap: 12px;
+  grid-template-columns: 20px 1fr;
+  gap: 8px;
   align-items: baseline;
-  padding: 11px 2px;
-  border-top: 1px solid rgba(17, 24, 39, 0.08);
   font-size: 14.5px;
   font-weight: 600;
 }
 
 .brief__no {
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--ink-faint);
   font-variant-numeric: tabular-nums;
 }
 
 /* The console date is what this whole page is for. */
-.brief__list li:last-child { color: var(--green-deep); }
-
-.brief__bring {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  margin: 0;
-  padding-top: 14px;
-  border-top: 1px dashed rgba(17, 24, 39, 0.12);
-  font-size: 12.5px;
-  color: var(--ink-soft);
-}
-
-.brief__tag {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
+.brief__block:first-of-type .brief__list li:last-child { color: var(--green-deep); }
 
 /* ---------- availability calendar ---------- */
 
@@ -889,9 +892,8 @@ body[data-stage="done"] { overflow: hidden; }
 }
 
 .thanks__sign {
-  font-size: 26px;
+  font-size: 30px;
   font-weight: 700;
-  letter-spacing: -0.03em;
   color: var(--blue);
 }
 
@@ -952,8 +954,12 @@ body[data-stage="done"] { overflow: hidden; }
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: 10px;
+  gap: 14px;
+  margin-top: 26px;
+  padding-top: 4px;
 }
+
+.thanks .podium { margin-top: 0; }
 
 .pod {
   display: grid;
