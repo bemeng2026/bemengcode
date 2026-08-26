@@ -55,12 +55,6 @@ const GUESTS = [
   { slug: "olel", name: "Olel" },
   { slug: "shey", name: "Shey" },
   { slug: "ken", name: "Ken" },
-  { slug: "dio", name: "Dio" },
-  { slug: "feb", name: "Feb" },
-  { slug: "jata", name: "Jata" },
-  { slug: "ghani", name: "Ghani" },
-  { slug: "agnes", name: "Agnes" },
-  { slug: "reyhan", name: "Reyhan" },
 ];
 
 /* The meeting where the console date gets decided. Kept in Indonesian,

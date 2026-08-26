@@ -108,6 +108,7 @@ function renderCalendar() {
     if (block) {
       cells.push(`
       <button type="button" class="${classes}" data-date="${date}" disabled
+              style="--i:${lead + d}"
               title="${esc(block)}"
               aria-label="${esc(`${d} ${MONTHS[month - 1]} ${year} — ${block}`)}">
         <span class="day__n">${d}</span>
@@ -118,7 +119,7 @@ function renderCalendar() {
 
     cells.push(`
       <button type="button" class="${classes}"
-              data-date="${date}"
+              data-date="${date}" style="--i:${lead + d}"
               title="${esc(taggers.join(", "))}"
               aria-label="${esc(`${d} ${MONTHS[month - 1]} ${year} — ${taggers.length} free`)}"
               aria-pressed="${mine.has(date)}">
@@ -230,8 +231,8 @@ function renderRoster() {
   if (!host) return;
 
   host.innerHTML = GUESTS.map(
-    (g) => `
-    <span class="rost ${submitted(g.slug) ? "rost--in" : ""}"
+    (g, i) => `
+    <span class="rost ${submitted(g.slug) ? "rost--in" : ""}" style="--i:${i}"
           title="${esc(submitted(g.slug) ? g.name + " answered" : g.name + " has not answered")}">
       ${esc(g.slug)}
     </span>`
@@ -418,6 +419,29 @@ function showThanks() {
   playRise(screen);
 }
 
+/* The month and the chips fan in once, the first time they are reached.
+   The marker is pulled afterwards so every later re-render is instant. */
+function initWave() {
+  const targets = ["#cal-grid", "#roster"]
+    .map((sel) => document.querySelector(sel))
+    .filter(Boolean);
+
+  if (!targets.length || !("IntersectionObserver" in window)) return;
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        io.unobserve(e.target);
+        e.target.dataset.wave = "";
+        setTimeout(() => delete e.target.dataset.wave, 1400);
+      });
+    },
+    { rootMargin: "0px 0px -5% 0px" }
+  );
+  targets.forEach((el) => io.observe(el));
+}
+
 /* ---------- sync ---------- */
 
 async function pull() {
@@ -524,6 +548,7 @@ function initVoting(guest) {
   draft = Draft.get(me) || [];
   initDrag();
   renderCalendar();
+  initWave();
 
   loadFirst();
   startPolling();

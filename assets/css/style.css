@@ -102,16 +102,29 @@
   }
 }
 
-/* Ornaments drift up into place. */
+/* Things arrive the way iOS brings a sheet in: they lift, settle out of a
+   slight scale, and sharpen from a blur — glass coming into focus. The
+   curve decelerates hard at the end, which is what makes it feel weighted
+   rather than linear. */
 [data-rise] {
   opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.6s cubic-bezier(0.22, 0.7, 0.3, 1),
-              transform 0.6s cubic-bezier(0.22, 0.7, 0.3, 1);
+  transform: translateY(20px) scale(0.985);
+  filter: blur(7px);
+  transition: opacity 0.66s cubic-bezier(0.32, 0.72, 0, 1),
+              transform 0.66s cubic-bezier(0.32, 0.72, 0, 1),
+              filter 0.5s cubic-bezier(0.32, 0.72, 0, 1);
   transition-delay: var(--d, 0s);
+  will-change: transform, opacity;
 }
 
-[data-rise][data-in="true"] { opacity: 1; transform: none; }
+[data-rise][data-in="true"] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* Once it has arrived, stop reserving a compositor layer for it. */
+[data-rise][data-settled="true"] { will-change: auto; }
 
 html {
   scroll-behavior: smooth;
@@ -120,10 +133,19 @@ html {
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+
+  /* Zeroing duration alone is not enough: the staggered reveals carry
+     their own delays, so a cell late in the wave still sat waiting.
+     Delays go to zero too, and the blur is dropped outright — a screen
+     sharpening into focus is motion whatever its duration. */
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
   }
+
+  [data-rise] { filter: none !important; }
 }
 
 /* Glass only reads when there is something behind it. This is the soft
@@ -644,6 +666,40 @@ body[data-stage="loading"] .rest { display: none; }
 }
 
 /* ---------- availability calendar ---------- */
+
+/* The month fans in once, the first time the calendar is reached. Driven
+   by index so it reads as a wave across the grid rather than 30 things
+   starting together. Removed afterwards so re-renders do not replay it. */
+.cal__grid[data-wave] .day {
+  animation: cell 0.5s cubic-bezier(0.32, 0.72, 0, 1) both;
+  animation-delay: calc(var(--i, 0) * 11ms);
+}
+
+@keyframes cell {
+  from { opacity: 0; transform: translateY(10px) scale(0.92); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Chips land the same way. */
+.roster[data-wave] .rost {
+  animation: cell 0.42s cubic-bezier(0.32, 0.72, 0, 1) both;
+  animation-delay: calc(var(--i, 0) * 26ms);
+}
+
+/* Rows inside a briefing card follow their card in. */
+.brief__card .brief__row {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.5s cubic-bezier(0.32, 0.72, 0, 1),
+              transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+  transition-delay: calc(var(--i, 0) * 55ms + 0.12s);
+}
+
+[data-in="true"] .brief__card .brief__row,
+[data-in="true"].brief__card .brief__row {
+  opacity: 1;
+  transform: none;
+}
 
 .vote { display: grid; grid-template-columns: 320px 1fr; gap: 24px; align-items: start; }
 

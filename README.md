@@ -30,8 +30,7 @@ and brackets alone.
 ## Invitations
 
 `index.html?u=<slug>` — kean, jason, barez, udin, razel, muti, muna, jpg,
-lunci, olel, shey, ken, dio, feb, jata, ghani, agnes, reyhan. Defaults to
-kean.
+lunci, olel, shey, ken. Defaults to kean.
 
 Every invitation uses the same layout and only the name differs; each
 person gets their own link. Add or rename people in `GUESTS` in `data.js`,

@@ -96,14 +96,18 @@ function renderLogos() {
 
 /* ---------- entrance animation ---------- */
 
+function settle(el) {
+  el.dataset.in = "true";
+  /* Drop the compositor hint once it has landed. */
+  setTimeout(() => (el.dataset.settled = "true"), 900);
+}
+
 function playRise(scope) {
   /* Two frames: the first paints the start state. Without it the
      transition is skipped and things simply appear. */
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      scope.querySelectorAll("[data-rise]").forEach((el) => {
-        el.dataset.in = "true";
-      });
+      scope.querySelectorAll("[data-rise]").forEach(settle);
     });
   });
 }
@@ -114,7 +118,7 @@ function watchRise(scope) {
   if (!items.length) return;
 
   if (!("IntersectionObserver" in window)) {
-    items.forEach((el) => (el.dataset.in = "true"));
+    items.forEach(settle);
     return;
   }
 
@@ -122,7 +126,7 @@ function watchRise(scope) {
     (entries) => {
       entries.forEach((e) => {
         if (!e.isIntersecting) return;
-        e.target.dataset.in = "true";
+        settle(e.target);
         io.unobserve(e.target);
       });
     },
