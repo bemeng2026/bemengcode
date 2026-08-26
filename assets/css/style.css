@@ -201,36 +201,12 @@ a { color: var(--blue); }
 }
 .topbar__brand:hover { text-decoration: underline; text-underline-offset: 3px; }
 
-.topbar__nav {
-  display: flex;
-  gap: 4px;
-  margin-left: auto;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.topbar__nav::-webkit-scrollbar { display: none; }
-
-.topbar__nav a {
-  color: var(--ink-soft);
-  text-decoration: none;
-  font-size: 13px;
-  padding: 6px 10px;
-  border-radius: var(--r-xs);
-  white-space: nowrap;
-}
-.topbar__nav a:hover { color: var(--ink); background: var(--bg-sunken); }
-
 /* ---------- generic section ---------- */
 
 .section { padding: 88px 0; }
 .section--alt { background: rgba(255, 255, 255, 0.28); }
 
-.comment { color: var(--green); }
-.kw { color: var(--blue); }
-
 /* ---------- invitation ---------- */
-
-
 
 .card {
   border: 1px solid var(--glass-hair);
@@ -307,7 +283,6 @@ a { color: var(--blue); }
   55% { opacity: 0.7; }
   100% { opacity: 1; }
 }
-
 
 .hero__foot {
   display: flex;
@@ -495,6 +470,25 @@ body[data-stage="loading"] .load__fill { animation: fill 1.3s ease-out forwards;
 body[data-stage="invite"] .rest,
 body[data-stage="loading"] .rest { display: none; }
 
+/* ---------- panel ---------- */
+
+.panel {
+  border: 1px solid var(--glass-hair);
+  border-radius: var(--r-lg);
+  background: var(--glass-2);
+  backdrop-filter: var(--blur-2);
+  -webkit-backdrop-filter: var(--blur-2);
+  box-shadow: var(--shadow), inset 0 1px 0 var(--glass-edge);
+  padding: 24px;
+}
+
+.panel__foot {
+  margin: 14px 0 0;
+  min-height: 1em;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
 /* ---------- section label ---------- */
 
 .label {
@@ -525,6 +519,8 @@ body[data-stage="loading"] .rest { display: none; }
 }
 
 .mk__r { animation-name: squeezeR; }
+
+.mk__s { display: inline-block; }
 
 /* The brackets close in on the slash, then ease back out. */
 /* They lean in, they never touch. */
@@ -560,74 +556,89 @@ body[data-stage="loading"] .rest { display: none; }
 
 /* ---------- meeting briefing ---------- */
 
-.brief { display: grid; gap: 22px; }
+/* Grouped cards, the way iOS lays out settings: the group name sits
+   outside in small caps, the rows live inside one rounded card, and the
+   hairline between rows starts where the row text starts. */
+.brief { display: grid; gap: 26px; }
 
 .brief__title {
   margin: 0;
-  font-size: clamp(18px, 4.2vw, 23px);
+  font-size: clamp(20px, 4.6vw, 26px);
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
-.brief__meta { margin: 0; display: grid; gap: 7px; }
+.brief__group { display: grid; gap: 8px; }
 
-.brief__meta div {
-  display: grid;
-  grid-template-columns: minmax(0, 84px) 1fr;
-  gap: 2px 14px;
-  align-items: baseline;
-  font-size: 14px;
-}
-
-.brief__meta dt {
-  font-size: 10.5px;
+.brief__head {
+  margin: 0 0 0 18px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   color: var(--ink-faint);
 }
 
-.brief__meta dd {
-  margin: 0;
+.brief__card {
+  border: 1px solid var(--glass-hair);
+  border-radius: var(--r-md);
+  background: var(--glass-2);
+  backdrop-filter: var(--blur-2);
+  -webkit-backdrop-filter: var(--blur-2);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 var(--glass-edge);
+  overflow: hidden;
+}
+
+.brief__row {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 14px;
+  align-items: baseline;
+  padding: 13px 18px;
+  font-size: 14.5px;
+}
+
+.brief__row + .brief__row { border-top: 1px solid rgba(17, 24, 39, 0.07); }
+
+.brief__k {
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+
+.brief__v {
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
-.brief__block { display: grid; gap: 8px; }
-
-.brief__head {
-  margin: 0;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--ink-soft);
+/* Numbered rows: the hairline starts past the number, iOS-style. */
+.brief__row--num { grid-template-columns: 22px 1fr; gap: 12px; }
+.brief__row--num + .brief__row--num { border-top: 0; position: relative; }
+.brief__row--num + .brief__row--num::before {
+  content: "";
+  position: absolute;
+  left: 52px;
+  right: 0;
+  top: 0;
+  border-top: 1px solid rgba(17, 24, 39, 0.07);
 }
 
-.brief__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 7px;
-}
-
-.brief__list li {
-  display: grid;
-  grid-template-columns: 20px 1fr;
-  gap: 8px;
-  align-items: baseline;
-  font-size: 14.5px;
-  font-weight: 600;
-}
-
-.brief__no {
-  font-size: 13px;
+.brief__n {
+  font-size: 12.5px;
   font-weight: 600;
   color: var(--ink-faint);
   font-variant-numeric: tabular-nums;
 }
 
+.brief__t { font-weight: 600; }
+
 /* The console date is what this whole page is for. */
-.brief__block:first-of-type .brief__list li:last-child { color: var(--green-deep); }
+.brief__row--flag .brief__t { color: var(--green-deep); }
+
+@media (max-width: 380px) {
+  .brief__row { grid-template-columns: 78px 1fr; gap: 10px; padding: 12px 14px; }
+  .brief__row--num { grid-template-columns: 20px 1fr; }
+  .brief__row--num + .brief__row--num::before { left: 44px; }
+}
 
 /* ---------- availability calendar ---------- */
 
@@ -709,16 +720,6 @@ body[data-stage="loading"] .rest { display: none; }
   font-weight: 600;
   line-height: 1;
   letter-spacing: -0.01em;
-}
-
-.day__c {
-  position: absolute;
-  top: 4px;
-  right: 5px;
-  font-size: 9.5px;
-  font-weight: 700;
-  line-height: 1;
-  opacity: 0.75;
 }
 
 .day--h1 { background: var(--heat-1); border-color: rgba(255, 255, 255, 0.75); }
@@ -819,52 +820,25 @@ body[data-stage="loading"] .rest { display: none; }
   font-weight: 600;
 }
 
-.top3 {
-  list-style: none;
-  margin: 18px 0 0;
-  padding: 0;
-  display: grid;
-  gap: 8px;
-}
-
-.top3 li {
-  display: grid;
-  grid-template-columns: 18px 52px 1fr 22px;
-  gap: 10px;
-  align-items: center;
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
-}
-
-.top3__pos { color: var(--ink-faint); font-size: 11px; font-weight: 700; }
-.top3__date { font-weight: 700; white-space: nowrap; }
-.top3__n { text-align: right; font-weight: 700; }
-
-.top3__bar {
-  height: 10px;
-  border-radius: var(--r-pill);
-  background: rgba(17, 24, 39, 0.07);
-  overflow: hidden;
-}
-.top3__bar span {
-  display: block;
-  height: 100%;
-  background: var(--green);
-  border-radius: var(--r-pill);
-}
-
-.top3 li:first-child .top3__bar span { background: var(--green-deep); }
-
 .empty { color: var(--ink-faint); font-size: 13px; margin: 16px 0 0; }
-
-.stats { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px; padding-top: 16px; border-top: 1px dashed var(--line); }
-.stat__k { font-size: 11px; color: var(--ink-faint); letter-spacing: 0.06em; }
-.stat__v { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
 
 .tools { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 
 .submit { width: 100%; justify-content: center; margin-top: 12px; border-radius: var(--r-pill); }
 .tools .btn { font-size: 12.5px; padding: 8px 16px; }
+
+/* On a narrow phone, seven 44px-wide cells plus the padding around them
+   are wider than the screen. Height carries the touch target instead, so
+   the cells stay tappable and the page stops scrolling sideways. */
+@media (max-width: 430px) {
+  .wrap { padding: 0 18px; }
+  .panel { padding: 18px; }
+  /* The grid reaches past the panel padding so the cells keep a 44px
+     tap target on a narrow phone without the page scrolling sideways. */
+  .cal__grid { gap: 4px; margin-inline: -9px; }
+  .day { aspect-ratio: auto; height: 46px; }
+  .brief__card { border-radius: var(--r-sm); }
+}
 
 /* ---------- closing screen ---------- */
 
@@ -1049,12 +1023,3 @@ body[data-stage="done"] { overflow: hidden; }
   color: var(--blue);
 }
 
-.sr {
-  position: absolute;
-  width: 1px; height: 1px;
-  padding: 0; margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
-}
