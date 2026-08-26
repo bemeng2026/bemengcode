@@ -17,6 +17,7 @@ const TEXT = {
   loading: "</>",
   seeYou: "see you",
   votingLabel: "when are you free",
+  briefBring: "bring",
 
   btn: {
     submit: "submit",
@@ -68,6 +69,21 @@ const AGENDA = [
   { no: "04", title: "claude for code" },
   { no: "05", title: "a whole day and night medz" },
 ];
+
+/* The meeting where the console date gets decided. */
+const BRIEFING = {
+  title: "RABID 4 REMEDIAL",
+  when: "Tue, 1 September 2026",
+  time: "18.00–21.00",
+  place: "Ruang BEM",
+  agenda: [
+    "Media school website and portfolio",
+    "Work programme leads for Q3A",
+    "IKM anniversary x Guyub 2026",
+    "DATE AND PLACE FOR KOOONSOL",
+  ],
+  bring: ["Laptop", "Framer downloaded"],
+};
 
 /* Availability calendar — September 2026 */
 const VOTE = {
