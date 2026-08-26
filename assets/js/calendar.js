@@ -22,6 +22,9 @@ let draft = [];
 let me = "";
 
 let poll = null;
+/* A submit in flight. Two quick taps used to fire two read-modify-writes,
+   and an answer landing between them would be overwritten. */
+let sending = false;
 let lastSeen = "";
 
 /* One month: how many blank cells lead the grid, and how many days. */
@@ -156,7 +159,14 @@ function rankRows(counts) {
    colour already says how busy each one is. */
 function podiumHTML(counts, max) {
   const rows = rankRows(counts).slice(0, 3);
-  if (!rows.length) return '<span class="empty">&mdash;</span>';
+
+  /* Nobody has answered yet. Show the shape of the answer rather than a
+     blank strip, so the section reads as waiting and not as broken. */
+  if (!rows.length) {
+    return [1, 2, 3]
+      .map((n) => `<span class="pod pod--${n} pod--wait" aria-hidden="true"></span>`)
+      .join("");
+  }
 
   return rows
     .map(([date, users], i) => {
@@ -312,25 +322,27 @@ function toggleDate(date) {
 }
 
 async function submitVote() {
-  if (!draft.length) return;
+  if (sending || !draft.length) return;
 
+  sending = true;
+  const btn = document.querySelector("#submit");
+  if (btn) {
+    btn.disabled = true;
+    btn.setAttribute("aria-busy", "true");
+  }
   say("sending…");
 
-  /* Re-read first so nobody else's answer gets overwritten. */
   try {
+    /* Re-read first so nobody else's answer gets overwritten. */
     votes = await store.read();
-  } catch (e) {
-    say(reachMsg(e));
-    return;
-  }
-
-  votes[me] = { dates: [...draft], at: Date.now() };
-
-  try {
+    votes[me] = { dates: [...draft], at: Date.now() };
     await store.write(votes);
   } catch (e) {
     say(reachMsg(e));
     return;
+  } finally {
+    sending = false;
+    if (btn) btn.removeAttribute("aria-busy");
   }
 
   lastSeen = JSON.stringify(votes);
@@ -388,7 +400,7 @@ function paintIdentity() {
   const sent = votes[me] && votes[me].dates.length ? votes[me].dates : null;
   const unchanged = sent !== null && sameDates(sent, draft);
 
-  btn.disabled = draft.length === 0 || unchanged;
+  btn.disabled = sending || draft.length === 0 || unchanged;
   btn.textContent = sent ? t("btn.resubmit") : t("btn.submit");
 }
 

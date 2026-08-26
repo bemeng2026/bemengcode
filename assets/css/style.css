@@ -1016,6 +1016,12 @@ body[data-stage="done"] { overflow: hidden; }
 
 .pod__m { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.7; }
 
+.pod--wait {
+  background: none;
+  border: 1.5px dashed rgba(17, 24, 39, 0.16);
+  box-shadow: none;
+}
+
 .pod--h1 { background: var(--heat-1); }
 .pod--h2 { background: var(--heat-2); }
 .pod--h3 { background: var(--heat-3); }
