@@ -8,7 +8,9 @@
   --bg-sunken: #eceef2;
   --ink: #1e1e1e;
   --ink-soft: #55595f;
-  --ink-faint: #8b9099;
+  /* Was #8b9099, which measured 3.04:1 on the glass — under the 4.5:1
+     floor. Darkened until it clears it. */
+  --ink-faint: #676d78;
   --line: #e2e5ea;
   --line-strong: #c9cdd4;
 
@@ -41,13 +43,25 @@
   --radius-sm: var(--r-sm);
   --maxw: 1080px;
 
-  /* iOS-style glass: translucent, blurred, with a bright top edge
-     so it reads as a layer. */
-  --glass: rgba(255, 255, 255, 0.62);
-  --glass-strong: rgba(255, 255, 255, 0.78);
-  --glass-edge: rgba(255, 255, 255, 0.85);
-  --glass-hair: rgba(17, 24, 39, 0.08);
-  --blur: blur(24px) saturate(180%);
+  /* iOS-style glass, as one ladder rather than per-component guesses.
+     Opacity runs higher than the 15-30% a vibrant backdrop would take:
+     the wash behind this page is pale, and text has to clear 4.5:1. */
+  --glass-1: rgba(255, 255, 255, 0.55);   /* raised: chips, cells   */
+  --glass-2: rgba(255, 255, 255, 0.66);   /* panels                 */
+  --glass-3: rgba(255, 255, 255, 0.80);   /* the invitation itself  */
+  --glass-veil: rgba(244, 246, 251, 0.88);/* full-screen layers      */
+
+  --glass-edge: rgba(255, 255, 255, 0.9);
+  --glass-hair: rgba(17, 24, 39, 0.09);
+
+  --blur-1: blur(12px) saturate(160%);
+  --blur-2: blur(20px) saturate(180%);
+  --blur-3: blur(30px) saturate(180%);
+
+  /* Back-compat aliases for rules further down. */
+  --glass: var(--glass-2);
+  --glass-strong: var(--glass-3);
+  --blur: var(--blur-2);
 
   --shadow: 0 1px 2px rgba(16, 24, 40, 0.04),
             0 8px 24px rgba(16, 24, 40, 0.07),
@@ -61,6 +75,14 @@
 *::after { box-sizing: border-box; }
 
 [hidden] { display: none !important; }
+
+/* Glass hides a default focus ring, so every control gets an explicit
+   one. Never removed — it is the only way through by keyboard. */
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2.5px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: var(--r-xs);
+}
 
 /* iOS corners are not circular arcs — they ease into the straight edge.
    Browsers that can draw that get it; the rest keep plain rounding. */
@@ -143,9 +165,9 @@ a { color: var(--blue); }
   position: sticky;
   top: 0;
   z-index: 50;
-  background: var(--glass);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
+  background: var(--glass-2);
+  backdrop-filter: var(--blur-2);
+  -webkit-backdrop-filter: var(--blur-2);
   border-bottom: 1px solid var(--glass-hair);
   box-shadow: inset 0 1px 0 var(--glass-edge);
 }
@@ -167,6 +189,9 @@ a { color: var(--blue); }
 }
 
 .topbar__brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   font-weight: 700;
   font-size: 13.5px;
   letter-spacing: -0.01em;
@@ -210,9 +235,9 @@ a { color: var(--blue); }
 .card {
   border: 1px solid var(--glass-hair);
   border-radius: var(--radius);
-  background: var(--glass-strong);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
+  background: var(--glass-3);
+  backdrop-filter: var(--blur-3);
+  -webkit-backdrop-filter: var(--blur-3);
   box-shadow: var(--shadow), inset 0 1px 0 var(--glass-edge);
   overflow: hidden;
 }
@@ -297,7 +322,13 @@ a { color: var(--blue); }
   color: var(--ink-soft);
   font-variant-numeric: tabular-nums;
 }
-.hero__foot a { color: var(--blue); text-underline-offset: 3px; }
+.hero__foot a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--blue);
+  text-underline-offset: 3px;
+}
 
 .btn {
   display: inline-flex;
@@ -307,7 +338,8 @@ a { color: var(--blue); }
   font-family: var(--font);
   font-size: 14px;
   font-weight: 600;
-  padding: 13px 22px;
+  min-height: 44px;
+  padding: 12px 22px;
   border-radius: var(--r-pill);
   border: 1px solid rgba(17, 24, 39, 0.9);
   background: rgba(24, 26, 30, 0.92);
@@ -323,12 +355,12 @@ a { color: var(--blue); }
 .btn:active { transform: scale(0.97); }
 
 .btn--ghost {
-  background: var(--glass);
+  background: var(--glass-2);
   color: var(--ink);
   border-color: var(--glass-hair);
   box-shadow: var(--shadow-sm), inset 0 1px 0 var(--glass-edge);
 }
-.btn--ghost:hover { background: var(--glass-strong); }
+.btn--ghost:hover { background: var(--glass-3); }
 
 .btn:disabled {
   opacity: 0.4;
@@ -415,8 +447,9 @@ a { color: var(--blue); }
   align-items: center;
   justify-content: center;
   gap: 22px;
-  background: rgba(244, 246, 251, 0.88);
-  backdrop-filter: blur(34px) saturate(180%);
+  background: var(--glass-veil);
+  backdrop-filter: var(--blur-3);
+  -webkit-backdrop-filter: var(--blur-3);
   -webkit-backdrop-filter: var(--blur);
 }
 
@@ -540,17 +573,18 @@ body[data-stage="loading"] .rest { display: none; }
 
 .brief__meta div {
   display: grid;
-  grid-template-columns: minmax(0, 92px) 1fr;
-  gap: 4px 10px;
+  grid-template-columns: minmax(0, 84px) 1fr;
+  gap: 2px 14px;
   align-items: baseline;
-  font-size: 13.5px;
+  font-size: 14px;
 }
 
 .brief__meta dt {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  color: var(--ink-soft);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
 }
 
 .brief__meta dd {
@@ -558,8 +592,6 @@ body[data-stage="loading"] .rest { display: none; }
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
-
-.brief__icon { font-size: 12px; line-height: 1; }
 
 .brief__block { display: grid; gap: 8px; }
 
@@ -659,7 +691,7 @@ body[data-stage="loading"] .rest { display: none; }
   padding: 0;
   border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--glass-1);
   color: var(--ink);
   font-family: var(--font);
   font-variant-numeric: tabular-nums;
@@ -774,7 +806,7 @@ body[data-stage="loading"] .rest { display: none; }
   padding: 6px 10px;
   border-radius: var(--r-pill);
   border: 1px solid rgba(255, 255, 255, 0.7);
-  background: rgba(255, 255, 255, 0.55);
+  background: var(--glass-1);
   color: var(--ink-faint);
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
 }
@@ -832,7 +864,7 @@ body[data-stage="loading"] .rest { display: none; }
 .tools { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 
 .submit { width: 100%; justify-content: center; margin-top: 12px; border-radius: var(--r-pill); }
-.tools .btn { font-size: 12px; padding: 8px 12px; }
+.tools .btn { font-size: 12.5px; padding: 8px 16px; }
 
 /* ---------- closing screen ---------- */
 
@@ -846,8 +878,9 @@ body[data-stage="loading"] .rest { display: none; }
   justify-content: center;
   gap: clamp(24px, 6vw, 40px);
   padding: 32px;
-  background: rgba(244, 246, 251, 0.86);
-  backdrop-filter: blur(34px) saturate(180%);
+  background: var(--glass-veil);
+  backdrop-filter: var(--blur-3);
+  -webkit-backdrop-filter: var(--blur-3);
   -webkit-backdrop-filter: var(--blur);
 }
 
@@ -1002,7 +1035,13 @@ body[data-stage="done"] { overflow: hidden; }
 
 .foot { border-top: 1px solid var(--glass-hair); padding: 32px 0 48px; color: var(--ink-faint); font-size: 12px; }
 .foot .wrap { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-.foot__site { font-size: 14px; color: var(--blue); }
+.foot__site {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 14px;
+  color: var(--blue);
+}
 
 .sr {
   position: absolute;

@@ -71,9 +71,9 @@ const BRIEFING = {
   place: "Ruang BEM",
 
   meta: [
-    { icon: "\u{1F5D3}\uFE0F", label: "Hari/tgl", value: "Selasa, 1 September 2026" },
-    { icon: "\u23F0", label: "Waktu", value: "18.00-21.00" },
-    { icon: "\u{1F4CD}", label: "Tempat", value: "Ruang BEM" },
+    { label: "Hari/tgl", value: "Selasa, 1 September 2026" },
+    { label: "Waktu", value: "18.00\u201321.00" },
+    { label: "Tempat", value: "Ruang BEM" },
   ],
 
   agendaLabel: "Agenda",
@@ -84,7 +84,7 @@ const BRIEFING = {
     "TANGGAL DAN TEMPAT KOOONSOL",
   ],
 
-  todoLabel: "\u{1F4CC} To do list",
+  todoLabel: "To do list",
   todo: ["Bawa laptop dan download Framer"],
 };
 

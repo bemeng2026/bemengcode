@@ -257,7 +257,7 @@ function renderBrief() {
         .map(
           (m) => `
         <div>
-          <dt><span class="brief__icon">${esc(m.icon)}</span>${esc(m.label)}</dt>
+          <dt>${esc(m.label)}</dt>
           <dd>${esc(m.value)}</dd>
         </div>`
         )
