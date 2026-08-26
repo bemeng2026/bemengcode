@@ -18,6 +18,7 @@ const TEXT = {
   seeYou: "see you",
   votingLabel: "vote tanggal konsol",
   briefBring: "bring",
+  seeYouAt: "and at RABID 4",
 
   btn: {
     submit: "submit",
@@ -60,12 +61,14 @@ const GUESTS = [
   { slug: "jata", name: "Jata" },
   { slug: "ghani", name: "Ghani" },
   { slug: "agnes", name: "Agnes" },
+  { slug: "reyhan", name: "Reyhan" },
 ];
 
 /* The meeting where the console date gets decided. */
 const BRIEFING = {
   title: "RABID 4 REMEDIAL",
   when: "Tue, 1 September 2026",
+  whenShort: "1 Sep",
   time: "18.00–21.00",
   place: "Ruang BEM",
   agenda: [
@@ -82,5 +85,10 @@ const VOTE = {
   year: 2026,
   month: 9,
   maxPicksPerUser: 0, /* 0 = unlimited; set a number to cap it */
+  /* Days already spoken for. Nobody can mark these. */
+  blocked: {
+    "2026-09-01": "RABID 4",
+  },
+
   pollSeconds: 10,    /* how often to pull in everyone else's answers */
 };

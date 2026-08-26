@@ -719,6 +719,35 @@ body[data-stage="loading"] .rest { display: none; }
 .day--h4.day--mine::after,
 .day--h5.day--mine::after { border-color: #fff; }
 
+/* A day already spoken for. Blue, not green — this is not availability,
+   it is something already on the calendar. */
+.day--block {
+  background: rgba(37, 99, 235, 0.12);
+  border-color: rgba(37, 99, 235, 0.35);
+  color: var(--blue);
+  cursor: default;
+  box-shadow: inset 0 0 0 1.5px rgba(37, 99, 235, 0.25);
+}
+.day--block:hover { transform: none; border-color: rgba(37, 99, 235, 0.35); }
+.day--block .day__n { font-weight: 800; }
+
+.day__tag {
+  position: absolute;
+  bottom: 4px;
+  font-size: 7.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--blue);
+}
+
+.mini__c--block {
+  background: rgba(37, 99, 235, 0.22);
+  border-color: rgba(37, 99, 235, 0.45);
+  box-shadow: inset 0 0 0 1.5px rgba(37, 99, 235, 0.35);
+  color: var(--blue);
+  font-weight: 800;
+}
+
 .day--weekend .day__n { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 
 .legend {
@@ -840,6 +869,16 @@ body[data-stage="done"] .thanks { animation: veil 0.45s ease-out; }
 
 .thanks [data-rise][data-in="true"] { transform: none; }
 body[data-stage="done"] { overflow: hidden; }
+
+.thanks__at {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--blue);
+  text-align: center;
+}
 
 .thanks__see {
   margin: 0;

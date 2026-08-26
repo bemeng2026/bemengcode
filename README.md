@@ -30,7 +30,8 @@ and brackets alone.
 ## Invitations
 
 `index.html?u=<slug>` — kean, jason, barez, udin, razel, muti, muna, jpg,
-lunci, olel, shey, ken, dio, feb, jata, ghani, agnes. Defaults to kean.
+lunci, olel, shey, ken, dio, feb, jata, ghani, agnes, reyhan. Defaults to
+kean.
 
 Every invitation uses the same layout and only the name differs; each
 person gets their own link. Add or rename people in `GUESTS` in `data.js`,
@@ -50,7 +51,8 @@ or tap single days — then submit. Only submitted answers reach the
 heatmap. The chips in the left panel show who has answered so far.
 
 Settings live in `VOTE` (`data.js`): `year`, `month`, `maxPicksPerUser`
-(`0` for unlimited) and `pollSeconds`.
+(`0` for unlimited), `pollSeconds`, and `blocked` — dates already spoken
+for, which nobody can mark and which show in blue rather than green.
 
 Answers are shared through JSONBin. To point it somewhere else, create a
 bin holding the contents of `vote-seed.json` (JSONBin rejects an empty

@@ -228,6 +228,12 @@ function renderHero(guest) {
 
 /* ---------- briefing ---------- */
 
+function renderThanksAt() {
+  const el = $("#thanks-at");
+  if (!el) return;
+  el.textContent = `${t("seeYouAt")} · ${BRIEFING.whenShort} · ${BRIEFING.place}`;
+}
+
 function renderBrief() {
   const host = $("#brief-card");
   if (!host) return;
@@ -327,6 +333,7 @@ function boot() {
   const guest = currentGuest();
   renderHero(guest);
   renderBrief();
+  renderThanksAt();
   initGate();
   watchRise($("#voting"));
   initVoting(guest);

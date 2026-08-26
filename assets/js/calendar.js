@@ -39,6 +39,8 @@ function monthLayout() {
 const iso = (y, m, d) =>
   `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
 
+const blockedOn = (date) => (VOTE.blocked || {})[date] || null;
+
 const submitted = (user) => Boolean(votes[user] && votes[user].dates.length);
 
 const sameDates = (a, b) =>
@@ -50,6 +52,7 @@ function tally() {
   const counts = new Map();
   Object.entries(votes).forEach(([user, entry]) => {
     entry.dates.forEach((date) => {
+      if (blockedOn(date)) return;
       if (!counts.has(date)) counts.set(date, []);
       counts.get(date).push(user);
     });
@@ -87,14 +90,28 @@ function renderCalendar() {
     const level = heatLevel(taggers.length, max);
     const dow = new Date(year, month - 1, d).getDay();
 
+    const block = blockedOn(date);
+
     const classes = [
       "day",
-      level ? `day--h${level}` : "",
-      mine.has(date) ? "day--mine" : "",
+      block ? "day--block" : "",
+      !block && level ? `day--h${level}` : "",
+      !block && mine.has(date) ? "day--mine" : "",
       dow === 0 || dow === 6 ? "day--weekend" : "",
     ]
       .filter(Boolean)
       .join(" ");
+
+    if (block) {
+      cells.push(`
+      <button type="button" class="${classes}" data-date="${date}" disabled
+              title="${esc(block)}"
+              aria-label="${esc(`${d} ${MONTHS[month - 1]} ${year} — ${block}`)}">
+        <span class="day__n">${d}</span>
+        <span class="day__tag">${esc(block.split(" ")[0])}</span>
+      </button>`);
+      continue;
+    }
 
     cells.push(`
       <button type="button" class="${classes}"
@@ -108,7 +125,7 @@ function renderCalendar() {
 
   host.innerHTML = cells.join("");
 
-  host.querySelectorAll("[data-date]").forEach((btn) => {
+  host.querySelectorAll("[data-date]:not([disabled])").forEach((btn) => {
     btn.addEventListener("click", () => {
       if (dragged) return; /* already handled by the drag */
       toggleDate(btn.dataset.date);
@@ -174,11 +191,12 @@ function renderThanks(counts, max) {
 
     for (let d = 1; d <= total; d += 1) {
       const date = iso(year, month, d);
+      const block = blockedOn(date);
       const level = heatLevel((counts.get(date) || []).length, max);
       cells.push(
-        `<span class="mini__c ${level ? `mini__c--h${level}` : ""} ${
-          mine.has(date) ? "mini__c--mine" : ""
-        }">${d}</span>`
+        `<span class="mini__c ${block ? "mini__c--block" : ""} ${
+          !block && level ? `mini__c--h${level}` : ""
+        } ${!block && mine.has(date) ? "mini__c--mine" : ""}">${d}</span>`
       );
     }
 
@@ -228,7 +246,7 @@ function initDrag() {
 
   grid.addEventListener("pointerdown", (e) => {
     const cell = e.target.closest("[data-date]");
-    if (!cell) return;
+    if (!cell || cell.disabled) return;
 
     dragging = true;
     dragMode = !draft.includes(cell.dataset.date);
@@ -245,7 +263,7 @@ function initDrag() {
   grid.addEventListener("pointermove", (e) => {
     if (!dragging) return;
     const cell = dayAt(e.clientX, e.clientY);
-    if (!cell) return;
+    if (!cell || cell.disabled) return;
 
     const has = draft.includes(cell.dataset.date);
     if (has === dragMode) return;
@@ -267,6 +285,8 @@ function initDrag() {
 /* ---------- actions ---------- */
 
 function setDate(date, on) {
+  if (blockedOn(date)) return;
+
   const at = draft.indexOf(date);
 
   if (!on) {
