@@ -16,7 +16,7 @@ const TEXT = {
   gate: "</>",
   loading: "</>",
   seeYou: "see you",
-  votingLabel: "when are you free",
+  votingLabel: "vote tanggal konsol",
   briefBring: "bring",
 
   btn: {
@@ -60,14 +60,6 @@ const GUESTS = [
   { slug: "jata", name: "Jata" },
   { slug: "ghani", name: "Ghani" },
   { slug: "agnes", name: "Agnes" },
-];
-
-const AGENDA = [
-  { no: "01", title: "code </html>" },
-  { no: "02", title: "framer integration" },
-  { no: "03", title: "github repository" },
-  { no: "04", title: "claude for code" },
-  { no: "05", title: "a whole day and night medz" },
 ];
 
 /* The meeting where the console date gets decided. */

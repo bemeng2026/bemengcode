@@ -22,7 +22,7 @@ assets/js/main.js       # rendering
 
 Everything the page shows lives in `assets/js/data.js`: `TEXT` for labels
 and headings, `EVENT` for the date and site, `GUESTS` for the invitations,
-`AGENDA` for the five sessions.
+`BRIEFING` for the meeting details.
 
 Change only what is inside the `"..."` quotes. Leave the quotes, commas
 and brackets alone.
@@ -37,8 +37,8 @@ person gets their own link. Add or rename people in `GUESTS` in `data.js`,
 then regenerate `vote-seed.json` to match.
 
 Page flow: the invitation fills one screen, tapping `</>` (or scrolling)
-plays a short loading state, then the agenda, the calendar, submit, and a
-closing screen.
+plays a short loading state, then the meeting briefing, the calendar,
+submit, and a closing screen.
 
 Light theme only. The three marks on the closing screen are inline SVG
 drawn here, not official brand assets.

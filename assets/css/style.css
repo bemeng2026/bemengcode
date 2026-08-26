@@ -465,7 +465,7 @@ body[data-stage="loading"] .load__fill { animation: fill 1.3s ease-out forwards;
 body[data-stage="invite"] .rest,
 body[data-stage="loading"] .rest { display: none; }
 
-/* ---------- agenda as a task list ---------- */
+/* ---------- section label ---------- */
 
 .label {
   font-size: 13px;
@@ -474,32 +474,6 @@ body[data-stage="loading"] .rest { display: none; }
   color: var(--ink-faint);
   margin: 0 0 24px;
   text-transform: lowercase;
-}
-
-.tasks { list-style: none; margin: 0; padding: 0; }
-
-.tasks li {
-  display: grid;
-  grid-template-columns: 40px 1fr;
-  gap: 16px;
-  align-items: baseline;
-  padding: 20px 4px;
-  border-bottom: 1px solid var(--line);
-}
-.tasks li:first-child { border-top: 1px solid var(--line); }
-.tasks li { border-bottom-color: rgba(17, 24, 39, 0.08); }
-
-.tasks__no {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--ink-faint);
-  font-variant-numeric: tabular-nums;
-}
-
-.tasks__t {
-  font-size: clamp(17px, 3.4vw, 21px);
-  font-weight: 600;
-  letter-spacing: -0.02em;
 }
 
 /* ---------- the </> mark ---------- */

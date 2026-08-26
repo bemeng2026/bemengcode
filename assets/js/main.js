@@ -226,21 +226,6 @@ function renderHero(guest) {
   playRise(host);
 }
 
-/* ---------- agenda ---------- */
-
-function renderAgenda() {
-  const host = $("#agenda-list");
-  if (!host) return;
-
-  host.innerHTML = AGENDA.map(
-    (a, i) => `
-    <li data-rise style="--d:${i * 0.09}s">
-      <span class="tasks__no">${esc(a.no)}</span>
-      <span class="tasks__t">${esc(a.title)}</span>
-    </li>`
-  ).join("");
-}
-
 /* ---------- briefing ---------- */
 
 function renderBrief() {
@@ -291,8 +276,8 @@ function initGate() {
 
     const reveal = () => {
       document.body.dataset.stage = "open";
-      $("#agenda").scrollIntoView({ behavior: instant ? "auto" : "smooth" });
-      playRise($("#agenda"));
+      $("#brief").scrollIntoView({ behavior: instant ? "auto" : "smooth" });
+      playRise($("#brief"));
       setTimeout(armCue, instant ? 0 : 800);
     };
 
@@ -341,10 +326,8 @@ function boot() {
   renderLogos();
   const guest = currentGuest();
   renderHero(guest);
-  renderAgenda();
   renderBrief();
   initGate();
-  watchRise($("#brief"));
   watchRise($("#voting"));
   initVoting(guest);
 
