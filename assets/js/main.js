@@ -252,9 +252,9 @@ function renderBrief() {
       .join("");
 
   host.innerHTML = `
-    <h3 class="brief__title">${esc(BRIEFING.title)}</h3>
+    <h3 class="brief__title" data-rise>${esc(BRIEFING.title)}</h3>
 
-    <div class="brief__card">
+    <div class="brief__card" data-rise style="--d:0.08s">
       ${BRIEFING.meta
         .map(
           (m) => `
@@ -266,15 +266,19 @@ function renderBrief() {
         .join("")}
     </div>
 
-    <div class="brief__group">
+    <div class="brief__group" data-rise style="--d:0.16s">
       <p class="brief__head">${esc(BRIEFING.agendaLabel)}</p>
       <div class="brief__card">${rows(BRIEFING.agenda, true)}</div>
     </div>
 
-    <div class="brief__group">
+    <div class="brief__group" data-rise style="--d:0.24s">
       <p class="brief__head">${esc(BRIEFING.todoLabel)}</p>
       <div class="brief__card">${rows(BRIEFING.todo, false)}</div>
     </div>`;
+
+  /* Scroll-driven from here down, so each card lands as it is reached
+     rather than the whole section arriving at once. */
+  watchRise(host);
 }
 
 /* ---------- invitation -> loading -> agenda ---------- */
@@ -298,7 +302,6 @@ function initGate() {
     const reveal = () => {
       document.body.dataset.stage = "open";
       $("#brief").scrollIntoView({ behavior: instant ? "auto" : "smooth" });
-      playRise($("#brief"));
       setTimeout(armCue, instant ? 0 : 800);
     };
 
@@ -351,6 +354,7 @@ function boot() {
   renderThanksAt();
   initGate();
   watchRise($("#voting"));
+  watchRise($(".foot"));
   initVoting(guest);
 
   const foot = $("#foot-site");
